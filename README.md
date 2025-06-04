@@ -38,12 +38,10 @@ The application will perform the following key functions:
 4.  **Data Processing & Logic:** The core logic of the application processes the collected data, applying rules and heuristics to identify build components and synergies.
 5.  **Analysis & Reporting:** The results of the analysis, including the build type, strengths, weaknesses, and suggestions, are presented to the user.
 
-## Technologies (Planned)
+## Technologies
 
 * **Primary Language:** Python
 * **API Interaction:** Bungie.net API
 * **Libraries:**
     * `requests` (for HTTP calls)
-    * Potentially a Destiny 2 API wrapper library for Python
-    * Libraries for handling and querying the Destiny Manifest (e.g., `sqlite3`)
 * **User Interface (TBD):** Could range from a command-line interface (CLI) to a web application.
