@@ -30,7 +30,7 @@ The application will perform the following key functions:
     * Suggest different mod configurations for armor.
     * Propose alternative Aspects or Fragments that might better suit the build's focus or improve its overall effectiveness.
 
-## How It Works (Conceptual Overview)
+## How It Will Work (Conceptual Overview)
 
 1.  **Authentication:** User authenticates with Bungie.net to grant the application permission to read their Destiny 2 character data.
 2.  **Data Fetching:** The application makes requests to the Bungie.net API to retrieve inventory, character, and vault information. This includes item instance IDs, definition hashes, and character progression.
