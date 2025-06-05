@@ -45,3 +45,9 @@ The application will perform the following key functions:
 * **Libraries:**
     * `requests` (for HTTP calls)
 * **User Interface (TBD):** Could range from a command-line interface (CLI) to a web application.
+ 
+## Links & Useful Info
+* **[Bungie API Intro](https://www.bungie.net/en/Forums/Post/85087279?sort=0&page=0)**
+* **[Bungie.net Applications Page](https://www.bungie.net/en/Application)**
+* **[Bungie OAuth2 Documentation](https://github.com/Bungie-net/api/wiki/OAuth-Documentation)**
+* **[Endpoints Wiki](https://destinydevs.github.io/BungieNetPlatform/docs/Endpoints)**
