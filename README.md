@@ -52,3 +52,4 @@ The application will perform the following key functions:
 * **[Bungie OAuth2 Documentation](https://github.com/Bungie-net/api/wiki/OAuth-Documentation)**
 * **[Endpoints Wiki](https://destinydevs.github.io/BungieNetPlatform/docs/Endpoints)**
 * **[Official Endpoint Documentation](https://www.bungie.net/d1/platform/Destiny/help/)**
+* **[Community Guide to Bungie API](https://paracausal.science/guide/)**
