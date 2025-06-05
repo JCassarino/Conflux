@@ -8,6 +8,9 @@ from requests_oauthlib import OAuth2Session
 # Used for storing sensitive information like API keys and secrets.
 from dotenv import load_dotenv
 
+# Allows the program to open a web browser to a specific URL.   
+import webbrowser
+
 # Standard Python library; used to interact with the OS.
 import os
 
@@ -42,7 +45,10 @@ session = OAuth2Session(client_id = client_id, redirect_uri = redirect_url)
 # Uses a helper method to generate the authorization URL. This is where the user will be sent to log in and authorize the app.
 # This method returns a tuple, where the first element is the URL, and the second element is a state token.
 auth_link = session.authorization_url(base_auth_url)
-print(f"Auth Link: {auth_link[0]}")
+#print(f"Auth Link: {auth_link[0]}")
+
+# Using webbrowser to open the generated auth URL
+webbrowser.open(auth_link[0])
 
 # The user will open the link in their browser, log in to their Bungie.net account, and authorize the application.
 # After authorization, they will be redirected to the redirect URL. 
