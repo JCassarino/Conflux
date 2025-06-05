@@ -30,7 +30,7 @@ The application will perform the following key functions:
     * Suggest different mod configurations for armor.
     * Propose alternative Aspects or Fragments that might better suit the build's focus or improve its overall effectiveness.
 
-## How It Works (Conceptual Overview)
+## How It Will Work (Conceptual Overview)
 
 1.  **Authentication:** User authenticates with Bungie.net to grant the application permission to read their Destiny 2 character data.
 2.  **Data Fetching:** The application makes requests to the Bungie.net API to retrieve inventory, character, and vault information. This includes item instance IDs, definition hashes, and character progression.
@@ -38,12 +38,17 @@ The application will perform the following key functions:
 4.  **Data Processing & Logic:** The core logic of the application processes the collected data, applying rules and heuristics to identify build components and synergies.
 5.  **Analysis & Reporting:** The results of the analysis, including the build type, strengths, weaknesses, and suggestions, are presented to the user.
 
-## Technologies (Planned)
+## Technologies
 
 * **Primary Language:** Python
 * **API Interaction:** Bungie.net API
 * **Libraries:**
     * `requests` (for HTTP calls)
-    * Potentially a Destiny 2 API wrapper library for Python
-    * Libraries for handling and querying the Destiny Manifest (e.g., `sqlite3`)
 * **User Interface (TBD):** Could range from a command-line interface (CLI) to a web application.
+ 
+## Links & Useful Info
+* **[Bungie API Intro](https://www.bungie.net/en/Forums/Post/85087279?sort=0&page=0)**
+* **[Bungie.net Applications Page](https://www.bungie.net/en/Application)**
+* **[Bungie OAuth2 Documentation](https://github.com/Bungie-net/api/wiki/OAuth-Documentation)**
+* **[Endpoints Wiki](https://destinydevs.github.io/BungieNetPlatform/docs/Endpoints)**
+* **[Official Endpoint Documentation](https://www.bungie.net/d1/platform/Destiny/help/)**
