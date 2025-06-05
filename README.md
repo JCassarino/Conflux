@@ -51,3 +51,4 @@ The application will perform the following key functions:
 * **[Bungie.net Applications Page](https://www.bungie.net/en/Application)**
 * **[Bungie OAuth2 Documentation](https://github.com/Bungie-net/api/wiki/OAuth-Documentation)**
 * **[Endpoints Wiki](https://destinydevs.github.io/BungieNetPlatform/docs/Endpoints)**
+* **[Official Endpoint Documentation](https://www.bungie.net/d1/platform/Destiny/help/)**
