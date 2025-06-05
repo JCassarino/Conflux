@@ -43,8 +43,11 @@ The application will perform the following key functions:
 * **Primary Language:** Python
 * **API Interaction:** Bungie.net API
 * **Libraries:**
-    * `requests` (for HTTP calls)
-* **User Interface (TBD):** Could range from a command-line interface (CLI) to a web application.
+    * `requests`
+    * `webbrowser`
+    * `dotenv`
+    * `os`
+* **User Interface:** Currently a command-line interface; Future plans for a full-fledged web release.
  
 ## Links & Useful Info
 * **[Bungie API Intro](https://www.bungie.net/en/Forums/Post/85087279?sort=0&page=0)**
