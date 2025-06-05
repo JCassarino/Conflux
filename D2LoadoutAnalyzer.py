@@ -1,9 +1,11 @@
+# Importing necessary libraries
 from requests_oauthlib import OAuth2Session
 from dotenv import load_dotenv
 import webbrowser
 import os
 load_dotenv()
 
+# Constants for niceer looking output
 BORDER = "-------------------------------------------------------"
 
 api_key = os.getenv("API_KEY")
@@ -38,6 +40,7 @@ print("Please log in to your Bungie.net account to authorize the application.")
 print(f"{BORDER}")
 print("After logging in, you will be redirected to the redirect URL.")
 print("Copy the full URL from your browser's address bar and paste it below.")
+print(f"{BORDER}")
 redirect_response = input("")
 
 # Extracts the authorization code from the redirect response URL.
