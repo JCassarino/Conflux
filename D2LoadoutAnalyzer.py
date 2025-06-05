@@ -1,6 +1,7 @@
 # Importing necessary libraries
 from requests_oauthlib import OAuth2Session
 from dotenv import load_dotenv
+import json
 import webbrowser
 import os
 load_dotenv()
@@ -16,7 +17,7 @@ base_auth_url = "https://www.bungie.net/en/oauth/authorize"
 redirect_url = "https://github.com/JCassarino/Destiny-2-Loadout-Analyzer"
 token_url = "https://www.bungie.net/platform/app/oauth/token/"
 
-# The API endpoint to retrieve user details after authorization has been completed.
+# API endpoints:
 get_user_details_endpoint = "https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/"
 
 # Creating a new OAuth2 session object.
@@ -55,9 +56,15 @@ session.fetch_token(
 additional_headers = {'X-API-KEY': os.getenv('API_KEY')}
 
 # Using an HTTP GET request to the Bungie API endpoint to retrieve user details. Calling get_current_bungie_net_user.
-response = session.get(url = get_user_details_endpoint, headers = additional_headers)
+user_details = session.get(url = get_user_details_endpoint, headers = additional_headers)
 
-# Print the response status, reason, and text to see the result of the API call.
-print(f"RESPONSE STATUS: {response.status_code}")
-print(f"RESPONSE REASON: {response.reason}")
-print(f"RESPONSE TEXT: \n{response.text}")
+if user_details.status_code != 200: 
+    print("Failed to retrieve user details. Please check your API key and client credentials.")
+    quit()
+
+
+# If the request is successful, the response will contain user details in JSON format.
+parsed_response = user_details.json()
+print(f"{BORDER}")
+print(f"Welcome, {parsed_response['Response']['displayName']}!")
+print("Please select a character to analyze:")
