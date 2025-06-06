@@ -6,7 +6,15 @@ Destiny 2 Loadout Analyzer is a tool designed to provide in-depth analysis of a 
 
 The primary goal is to help players better understand their loadouts, optimize their builds for various activities, and discover new synergistic combinations.
 
-## Core Functionality
+## Current Functionality
+1.  **Data Import:**
+    * Connect to the Bungie.net API to fetch a player's Bungie.net user information.
+    * Utilize this information to pinpoint the user's active Destiny 2 profile to allow for later calls.
+  
+![Current Output](OutputSS1.png)
+
+
+## Intended Functionality
 
 The application will perform the following key functions:
 
