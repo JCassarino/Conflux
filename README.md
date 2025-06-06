@@ -11,7 +11,7 @@ The primary goal is to help players better understand their loadouts, optimize t
     * Connect to the Bungie.net API to fetch a player's Bungie.net user information.
     * Utilize this information to pinpoint the user's active Destiny 2 profile to allow for later calls.
   
-![Current Output](/Demo/ColorOutput)
+![Current Output](./Demo/ColorOutput)
 
 
 ## Intended Functionality
