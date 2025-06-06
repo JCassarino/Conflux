@@ -6,7 +6,15 @@ Destiny 2 Loadout Analyzer is a tool designed to provide in-depth analysis of a 
 
 The primary goal is to help players better understand their loadouts, optimize their builds for various activities, and discover new synergistic combinations.
 
-## Core Functionality
+## Current Functionality
+1.  **Data Import:**
+    * Connect to the Bungie.net API to fetch a player's Bungie.net user information.
+    * Utilize this information to pinpoint the user's active Destiny 2 profile to allow for later calls.
+  
+![Current Output](OutputSS1.png)
+
+
+## Intended Functionality
 
 The application will perform the following key functions:
 
@@ -54,5 +62,5 @@ The application will perform the following key functions:
 * **[Bungie.net Applications Page](https://www.bungie.net/en/Application)**
 * **[Bungie OAuth2 Documentation](https://github.com/Bungie-net/api/wiki/OAuth-Documentation)**
 * **[Endpoints Wiki](https://destinydevs.github.io/BungieNetPlatform/docs/Endpoints)**
-* **[Official Endpoint Documentation]([https://www.bungie.net/d1/platform/Destiny/help/](https://bungie-net.github.io/multi/index.html))**
+* **[Official Endpoint Documentation](https://bungie-net.github.io/multi/index.html)**
 * **[Community Guide to Bungie API](https://paracausal.science/guide/)**
