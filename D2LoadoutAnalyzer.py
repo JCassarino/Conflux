@@ -1,15 +1,28 @@
-# Importing necessary libraries
+﻿# Importing necessary libraries
 from requests_oauthlib import OAuth2Session
 from dotenv import load_dotenv
 import json
 import webbrowser
 import os
+import colorama
+from colorama import Fore, Style, Back
 
 # Load environment variables
 load_dotenv()
 
-# Constants
-BORDER = "\n-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~\n"
+# Initialize colorama to auto-reset colors after each print
+colorama.init(autoreset=True)
+
+# Constants for formatting
+HEADER = Fore.MAGENTA + Style.BRIGHT
+INFO = Fore.GREEN + Style.BRIGHT
+ACTION = Fore.YELLOW
+INPUT = Fore.BLUE
+RESET = Style.RESET_ALL
+BORDER = HEADER + "\n-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~\n"
+CHECK = INFO + "✓"
+
+# Membership types for Destiny 2 profiles
 MEMBERSHIP_TYPES = { -1: "All", 254: "BungieNext", 1: "Xbox", 2: "Playstation", 3: "Steam", 6: "Epic Games"}
 
 # API URLs and Endpoints
@@ -54,12 +67,11 @@ def perform_oauth_flow(client_id_val, client_secret_val):
     # They need to copy the full URL from their browser's address bar and paste it back into the program.
     print(BORDER)
     print("Welcome to the Destiny 2 Loadout Analyzer!")
-    print("Please log in to your Bungie.net account in the browser window/tab that just opened.")
+    print(ACTION + "Please log in to your Bungie.net account in the browser window/tab that just opened.")
     print(BORDER)
-    print("After logging in and authorizing, you will be redirected to the redirect URL.")
-    print("Copy the full URL from your browser's address bar and paste it below.")
-    print(BORDER)
-    redirect_response_url = input("")
+    print("After authorizing, you will be redirected to a new page.")
+    print(ACTION + "Copy the full URL from your browser's address bar.\n")
+    redirect_response_url = input(INPUT + "Paste the full redirect URL here -> ")
     print(BORDER)
 
     # Extracts the authorization code from the redirect response URL.
@@ -129,7 +141,7 @@ def main():
     """
     print("Formatted user details response from Bungie API:")
     print(json.dumps(parsed_user_details_val, indent=4))
-    print(f"{BORDER}")
+    print(BORDER)
     """
 
     # User details allow us to get the necessary profile info; Exits if it fails.
@@ -141,7 +153,7 @@ def main():
         print("Could not find Bungie.net membershipId. Exiting.")
         return
 
-    print(f"\nFetching linked Destiny profiles for {bnet_display_name} (ID: {bnet_membership_id})...")
+    print(f"\nFetching linked Destiny profiles for {INFO + bnet_display_name + RESET} (ID: {INFO + bnet_membership_id + RESET})...")
     # Membership type 254 is for BungieNext (the Bungie.net account itself) when getting linked profiles
     linked_profiles_url = GET_LINKED_PROFILES_ENDPOINT_TEMPLATE.format(254, bnet_membership_id)
     parsed_linked_profiles_val = get_api_data(authenticated_session, linked_profiles_url, additional_headers_val)
@@ -184,16 +196,16 @@ def main():
     # If a Destiny profile was successfully selected, print the details; If not, print an error.
     if destiny_platform_membership_id and destiny_platform_membership_type is not None:
         print(BORDER)
-        print(f"Selected Destiny Profile for API calls: {selected_profile_display_name}")
-        print(f"Cross-Save Anchor Platform: {MEMBERSHIP_TYPES[destiny_platform_membership_type]}")
+        print(f"Selected Destiny Profile for API calls: {INFO + selected_profile_display_name}")
+        print(f"Active Cross-Save Platform: {INFO + MEMBERSHIP_TYPES[destiny_platform_membership_type]}")
         print(BORDER)
 
-        print(f"Welcome, {bnet_display_name}!")
+        print(f"Welcome, {INFO + bnet_display_name}!")
         print("Please select a character to analyze:") # Placeholder for next steps
 
     else:
         print(BORDER)
-        print(f"Welcome, {bnet_display_name}, we could not determine a Destiny profile to analyze.")
+        print(f"Welcome, {INFO + bnet_display_name}, we could not determine a Destiny profile to analyze.")
         print(BORDER)
         return
 
