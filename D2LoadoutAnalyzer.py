@@ -31,7 +31,7 @@ REDIRECT_URL = "https://github.com/JCassarino/Destiny-2-Loadout-Analyzer"
 TOKEN_URL = "https://www.bungie.net/platform/app/oauth/token/"
 GET_USER_DETAILS_ENDPOINT = "https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/"
 GET_LINKED_PROFILES_ENDPOINT_TEMPLATE = "https://www.bungie.net/Platform/Destiny2/{}/Profile/{}/LinkedProfiles/" # .format(membership_type, membership_id)
-# GET_DESTINY_PROFILE_ENDPOINT_TEMPLATE = "https://www.bungie.net/Platform/Destiny2/{}/Profile/{}/" # .format(membership_type, membership_id)
+GET_DESTINY_PROFILE_ENDPOINT = "https://www.bungie.net/Platform/Destiny2/{}/Profile/{}/?components=100"
 
 def load_credentials():
     """Loads API credentials from environment variables."""
@@ -110,6 +110,42 @@ def get_api_data(current_session, url, headers, params=None):
         if hasattr(e, 'response') and e.response is not None:
             print(f"API Error Details: {e.response.text}")
         return None
+
+
+def get_character_info(authenticated_session, headers, membership_type, membership_id):
+    """
+    Fetches character information using the Destiny 2 API.
+    """
+    # build profile endpoint
+    destiny_profile_url = GET_DESTINY_PROFILE_ENDPOINT.format(membership_type, membership_id)
+    
+    # get character id from api
+    profile_data = get_api_data(authenticated_session, destiny_profile_url, headers)
+    
+    if not profile_data or "Response" not in profile_data or "characters" not in profile_data["Response"]:
+        print("Failed to retrieve Destiny profile or character list.")
+        return
+    
+    character_ids = profile_data["Response"]["characters"]["data"].keys()
+    if not character_ids:
+        print("No characters found on this profile.")
+        return
+    
+    selected_character_id = list(character_ids)[0]  # Just pick the first one for now
+    
+    # build character endpoint
+    character_url = f"https://www.bungie.net/Platform/Destiny2/{membership_type}/Profile/{membership_id}/Character/{selected_character_id}/?components=200"
+    
+    character_data = get_api_data(authenticated_session, character_url, headers)
+    
+    # print some basic info
+    if character_data and "Response" in character_data:
+        print(BORDER)
+        print(f"{INFO}Character Data Retrieved Successfully:")
+        print(json.dumps(character_data["Response"], indent=4))
+        print(BORDER)
+    else:
+        print("Failed to fetch character data.")
 
 
 def main():
@@ -207,7 +243,9 @@ def main():
         print(BORDER)
         print(f"Welcome, {INFO + bnet_display_name}, we could not determine a Destiny profile to analyze.")
         print(BORDER)
-        return
+    
+    return authenticated_session, additional_headers_val, destiny_platform_membership_type, destiny_platform_membership_id
 
-if __name__ == "__main__":
-    main()
+authenticated_session, additional_headers_val, destiny_platform_membership_type, destiny_platform_membership_id = main() # have a look at what I made main() return
+
+get_character_info(authenticated_session, additional_headers_val, destiny_platform_membership_type, destiny_platform_membership_id) # should spit out basic character info
