@@ -6,6 +6,7 @@ import webbrowser
 import os
 import colorama
 from colorama import Fore, Style, Back
+from urllib.parse import urlparse, parse_qs
 
 # Load environment variables
 load_dotenv()
@@ -13,11 +14,14 @@ load_dotenv()
 # Initialize colorama to auto-reset colors after each print
 colorama.init(autoreset=True)
 
-# Constants for formatting
+# --- Constands & Configuration ---
+
+# Formatting
 HEADER = Fore.MAGENTA + Style.BRIGHT
 INFO = Fore.GREEN + Style.BRIGHT
 ACTION = Fore.YELLOW
 INPUT = Fore.BLUE
+ERROR = Fore.RED + Style.BRIGHT
 RESET = Style.RESET_ALL
 BORDER = HEADER + "\n-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~\n"
 CHECK = INFO + "✓"
@@ -26,12 +30,13 @@ CHECK = INFO + "✓"
 MEMBERSHIP_TYPES = { -1: "All", 254: "BungieNext", 1: "Xbox", 2: "Playstation", 3: "Steam", 6: "Epic Games"}
 
 # API URLs and Endpoints
-BASE_AUTH_URL = "https://www.bungie.net/en/oauth/authorize"
+BASE_BUNGIE_URL = "https://www.bungie.net"
+BASE_API_URL = f"{BASE_BUNGIE_URL}/Platform"
+BASE_AUTH_URL = f"{BASE_BUNGIE_URL}/en/oauth/authorize"
 REDIRECT_URL = "https://github.com/JCassarino/Destiny-2-Loadout-Analyzer"
-TOKEN_URL = "https://www.bungie.net/platform/app/oauth/token/"
-GET_USER_DETAILS_ENDPOINT = "https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/"
-GET_LINKED_PROFILES_ENDPOINT_TEMPLATE = "https://www.bungie.net/Platform/Destiny2/{}/Profile/{}/LinkedProfiles/" # .format(membership_type, membership_id)
-GET_DESTINY_PROFILE_ENDPOINT = "https://www.bungie.net/Platform/Destiny2/{}/Profile/{}/?components=100"
+TOKEN_URL = f"{BASE_API_URL}/app/oauth/token/"
+GET_USER_DETAILS_ENDPOINT = f"{BASE_API_URL}/User/GetCurrentBungieNetUser/"
+GET_DESTINY_PROFILE_ENDPOINT_TEMPLATE = f"{BASE_API_URL}/Destiny2/{{}}/Profile/{{}}/" # Templated: use .format(membership_type, membership_id)
 
 def load_credentials():
     """Loads API credentials from environment variables."""
@@ -112,40 +117,64 @@ def get_api_data(current_session, url, headers, params=None):
         return None
 
 
-def get_character_info(authenticated_session, headers, membership_type, membership_id):
+def select_destiny_profile(parsed_linked_profiles_val):
     """
-    Fetches character information using the Destiny 2 API.
+    Selects the primary Destiny profile from the linked profiles response.
+    Returns a dictionary with the selected profile's details or None.
     """
-    # build profile endpoint
-    destiny_profile_url = GET_DESTINY_PROFILE_ENDPOINT.format(membership_type, membership_id)
-    
-    # get character id from api
-    profile_data = get_api_data(authenticated_session, destiny_profile_url, headers)
-    
+
+    if not parsed_linked_profiles_val or 'Response' not in parsed_linked_profiles_val:
+        return None
+
+    destiny_profiles = parsed_linked_profiles_val.get('Response', {}).get('profiles', [])
+    if not destiny_profiles:
+        print("No Destiny game profiles found linked to this Bungie.net account.")
+        return None
+
+    selected_profile = None
+
+    # Selects the cross-save primary profile if it exists.
+    for profile in destiny_profiles:
+        if profile.get('isCrossSavePrimary') is True:
+            selected_profile = profile
+            break
+
+    # If no primary is explicitly marked, select the first available profile.
+    if not selected_profile:
+        selected_profile = destiny_profiles[0]
+
+    return {
+        "membership_id": selected_profile.get('membershipId'),
+        "membership_type": selected_profile.get('membershipType'),
+        "display_name": selected_profile.get('displayName')
+    }
+
+
+def get_character_info(session, headers, destiny_profile):
+    """
+    Fetches character data for a given Destiny profile.
+    Returns character data or None if it fails.
+    """
+
+    membership_type =  destiny_profile['membership_type']
+    membership_id = destiny_profile['membership_id']
+
+    if not all([membership_type, membership_id]):
+        print(ERROR + "Missing membership type or ID.")
+        return None
+
+    # Build the Destiny profile endpoint URL using the provided membership type and ID
+    destiny_profile_url = GET_DESTINY_PROFILE_ENDPOINT_TEMPLATE.format(membership_type, membership_id)
+    profile_components = {'components': '200'}
+
+    # Call the API to get the Destiny profile data. Component 200 returns basic character info for all characters on a profile.
+    profile_data = get_api_data(session, destiny_profile_url, headers, params=profile_components)
+
     if not profile_data or "Response" not in profile_data or "characters" not in profile_data["Response"]:
-        print("Failed to retrieve Destiny profile or character list.")
-        return
+        print(ERROR + "Failed to retrieve Destiny profile or character list.")
+        return None
     
-    character_ids = profile_data["Response"]["characters"]["data"].keys()
-    if not character_ids:
-        print("No characters found on this profile.")
-        return
-    
-    selected_character_id = list(character_ids)[0]  # Just pick the first one for now
-    
-    # build character endpoint
-    character_url = f"https://www.bungie.net/Platform/Destiny2/{membership_type}/Profile/{membership_id}/Character/{selected_character_id}/?components=200"
-    
-    character_data = get_api_data(authenticated_session, character_url, headers)
-    
-    # print some basic info
-    if character_data and "Response" in character_data:
-        print(BORDER)
-        print(f"{INFO}Character Data Retrieved Successfully:")
-        print(json.dumps(character_data["Response"], indent=4))
-        print(BORDER)
-    else:
-        print("Failed to fetch character data.")
+    return profile_data.get("Response", {}).get("characters", {}).get("data")
 
 
 def main():
@@ -165,87 +194,52 @@ def main():
         print("OAuth authorization failed. Exiting.")
         return
 
-    # Retrieve bungie.net user details; Provides info necessary for subsequent API calls.
-    print("Fetching Bungie.net user details...")
+    # Fetches the current Bungie.net user details using the authenticated session.
+    print("Fetching account information...")
     parsed_user_details_val = get_api_data(authenticated_session, GET_USER_DETAILS_ENDPOINT, additional_headers_val)
-
-    if not parsed_user_details_val or 'Response' not in parsed_user_details_val:
-        print("User details not found. Exiting.")
-        return
-
-    # Full API response for user details; Commented out, can be uncommented for debugging.
-    """
-    print("Formatted user details response from Bungie API:")
-    print(json.dumps(parsed_user_details_val, indent=4))
-    print(BORDER)
-    """
-
-    # User details allow us to get the necessary profile info; Exits if it fails.
-    bungie_net_user_response = parsed_user_details_val['Response']
-    bnet_membership_id = bungie_net_user_response.get('membershipId')
-    bnet_display_name = bungie_net_user_response.get('displayName', "Guardian")
+    if not parsed_user_details_val: return
+    
+    bnet_membership_id = parsed_user_details_val.get('Response', {}).get('membershipId')
+    bnet_display_name = parsed_user_details_val.get('Response', {}).get('displayName', "Guardian")
+    print(f"   Fetched Bungie.net user: {INFO}{bnet_display_name}")
 
     if not bnet_membership_id:
-        print("Could not find Bungie.net membershipId. Exiting.")
+        print(f"{ERROR}Could not find Bungie.net membershipId. Exiting.")
         return
 
-    print(f"\nFetching linked Destiny profiles for {INFO + bnet_display_name + RESET} (ID: {INFO + bnet_membership_id + RESET})...")
-    # Membership type 254 is for BungieNext (the Bungie.net account itself) when getting linked profiles
-    linked_profiles_url = GET_LINKED_PROFILES_ENDPOINT_TEMPLATE.format(254, bnet_membership_id)
+    # Using membershipType 254 (BungieNext) to get linked profiles.
+    linked_profiles_url = f"{BASE_API_URL}/Destiny2/254/Profile/{bnet_membership_id}/LinkedProfiles/"
     parsed_linked_profiles_val = get_api_data(authenticated_session, linked_profiles_url, additional_headers_val)
+    
+    selected_destiny_profile = select_destiny_profile(parsed_linked_profiles_val)
+    if not selected_destiny_profile:
+        print(ERROR + "Could not determine a Destiny profile to analyze.")
+        return
+        
+    print(f"   Selected Destiny account: {INFO} {selected_destiny_profile['display_name']} ({MEMBERSHIP_TYPES.get(selected_destiny_profile['membership_type'])})")
 
-    if not parsed_linked_profiles_val or 'Response' not in parsed_linked_profiles_val or 'profiles' not in parsed_linked_profiles_val['Response']:
-        print("Failed to retrieve linked profiles or the response was malformed. Exiting.")
+    character_data_dict = get_character_info(authenticated_session, additional_headers_val, selected_destiny_profile)
+    
+    if not character_data_dict:
+        print("Could not retrieve character data.")
         return
 
-    destiny_profiles = parsed_linked_profiles_val['Response']['profiles']
+    # Final output
+    print(BORDER)
+    print(f"Welcome, {INFO + bnet_display_name}!")
+    print(ACTION + "Please select a character below to analyze:")
+    print(BORDER)
     
-    # Variables to store the selected Destiny platform profile details
-    destiny_platform_membership_id = None
-    destiny_platform_membership_type = None
-    selected_profile_display_name = None
-
-    if not destiny_profiles:
-        print("No Destiny game profiles found linked to this Bungie.net account.")
-    else:
-        for profile in destiny_profiles:
-            if profile.get('isCrossSavePrimary') is True:
-                destiny_platform_membership_id = profile.get('membershipId')
-                destiny_platform_membership_type = profile.get('membershipType')
-                selected_profile_display_name = profile.get('displayName')
-                break # Found the primary
-        
-        # Fallback if no primary is explicitly marked (e.g., pick the first one) # REVISE LATER TO ALLOW THE USER TO CHOOSEE
-        if not destiny_platform_membership_id and destiny_profiles:
-            print("No Cross Save primary profile found, selecting the first available Destiny profile.")
-            profile = destiny_profiles[0]
-            destiny_platform_membership_id = profile.get('membershipId')
-            destiny_platform_membership_type = profile.get('membershipType')
-            selected_profile_display_name = profile.get('displayName')
-
-    # Full API response for user profiles; Commented out, can be uncommented for debugging purposes.
-    """
-    print("Formatted linked profiles response from Bungie API:")
-    print(json.dumps(parsed_linked_profiles_val, indent=4)) # Print the whole linked profiles response
-    """
-
-    # If a Destiny profile was successfully selected, print the details; If not, print an error.
-    if destiny_platform_membership_id and destiny_platform_membership_type is not None:
-        print(BORDER)
-        print(f"Selected Destiny Profile for API calls: {INFO + selected_profile_display_name}")
-        print(f"Active Cross-Save Platform: {INFO + MEMBERSHIP_TYPES[destiny_platform_membership_type]}")
-        print(BORDER)
-
-        print(f"Welcome, {INFO + bnet_display_name}!")
-        print("Please select a character to analyze:") # Placeholder for next steps
-
-    else:
-        print(BORDER)
-        print(f"Welcome, {INFO + bnet_display_name}, we could not determine a Destiny profile to analyze.")
-        print(BORDER)
+    for char_id, char_info in character_data_dict.items():
+        # You would use the Manifest here to look up class and race names
+        class_hash = char_info.get('classHash')
+        race_hash = char_info.get('raceHash')
+        light = char_info.get('light')
+        # Placeholder for class name until Manifest is implemented
+        class_name = f"ClassHash_{class_hash}"
+        print(f"Character: {INFO}{class_name}{RESET} | Light: {ACTION}{light}{RESET} | ID: {char_id}")
     
-    return authenticated_session, additional_headers_val, destiny_platform_membership_type, destiny_platform_membership_id
+    print(BORDER)
 
-authenticated_session, additional_headers_val, destiny_platform_membership_type, destiny_platform_membership_id = main() # have a look at what I made main() return
-
-get_character_info(authenticated_session, additional_headers_val, destiny_platform_membership_type, destiny_platform_membership_id) # should spit out basic character info
+if __name__ == "__main__":
+    main()
