@@ -6,7 +6,10 @@ import webbrowser
 import os
 import colorama
 from colorama import Fore, Style, Back
-from urllib.parse import urlparse, parse_qs
+import requests # For non-authenticated requests (like the manifest)
+import sqlite3  # For interacting with the SQLite database
+import zipfile  # For handling the .zip file
+import io       
 
 # Load environment variables
 load_dotenv()
@@ -37,6 +40,10 @@ REDIRECT_URL = "https://github.com/JCassarino/Destiny-2-Loadout-Analyzer"
 TOKEN_URL = f"{BASE_API_URL}/app/oauth/token/"
 GET_USER_DETAILS_ENDPOINT = f"{BASE_API_URL}/User/GetCurrentBungieNetUser/"
 GET_DESTINY_PROFILE_ENDPOINT_TEMPLATE = f"{BASE_API_URL}/Destiny2/{{}}/Profile/{{}}/" # Templated: use .format(membership_type, membership_id)
+GET_MANIFEST_ENDPOINT = f"{BASE_API_URL}/Destiny2/Manifest/"
+
+# Manifest
+MANIFEST_DB_PATH = None  # This will be set after downloading the manifest
 
 def load_credentials():
     """Loads API credentials from environment variables."""
@@ -177,6 +184,80 @@ def get_character_info(session, headers, destiny_profile):
     return profile_data.get("Response", {}).get("characters", {}).get("data")
 
 
+def get_manifest_location(headers):
+    """
+    Fetches the location of the latest manifest file from Bungie API
+    """
+
+    # Tries to fetch the manifest URL from the Bungie API. If fails, an HTTP Error is raised. If successful, it returns the manifest URL.
+    try:
+        manifest_response = requests.get(GET_MANIFEST_ENDPOINT, headers=headers)
+        manifest_response.raise_for_status() 
+        manifest_url = BASE_BUNGIE_URL + manifest_response.json()['Response']['mobileWorldContentPaths']['en']
+
+    except Exception as e: 
+        print(f"{ERROR}Failed to fetch manifest loation: {e}")
+        return None
+
+    return manifest_url
+
+
+def download_manifest(manifest_url):
+    """
+    Downloads the Destiny 2 manifest file from the provided URL. Extracts the contents and saves them to a local SQLite database.
+    Returns the path to the SQLite database file or None if it fails.
+    """
+
+    try:
+        # Downloading the manifest file.
+        response = requests.get(manifest_url)
+
+        # Extracting the contents of the zip file
+        with zipfile.ZipFile(io.BytesIO(response.content)) as manifest_zip:
+            files = manifest_zip.namelist()
+            manifest_zip.extract(files[0])
+
+        return files[0]
+
+
+
+    except Exception as e:
+        print(f"{ERROR}Failed to download or extract manifest: {e}")
+        return None
+
+
+def query_manifest(table_name, hash_id):
+    """
+    Given a table name and hash ID, queries the local SQLite database for the corresponding data.
+    """
+
+    try:
+
+        # .connect is opening the SQLite database file. Also creates a cursor object to execute SQL queries.
+        con = sqlite3.connect(MANIFEST_DB_PATH)
+        cur = con.cursor()
+
+        # Converting hash_id
+        if hash_id > 2147483647:
+            hash_id = hash_id - 4294967296
+
+        # Template SQL query string to fetch the JSON data for the passed hash ID from the passed table.
+        query_str = f"SELECT json FROM {table_name} WHERE id = ?"
+
+        cur.execute(query_str, (hash_id,))
+
+        result = cur.fetchone()
+
+        con.close()
+
+        if result:
+            return json.loads(result[0])
+
+    except Exception as e:
+        print(f"{ERROR}Error querying manifest database: {e}")
+        return None
+
+
 def main():
     """Main function to orchestrate the application flow."""
 
@@ -188,6 +269,11 @@ def main():
     # Header for API calls; Bungie requires an API key for all calls.
     additional_headers_val = {'X-API-KEY': api_key_val}
 
+    # Downloads the manifest database if it doesn't exist.
+    global MANIFEST_DB_PATH
+    if not MANIFEST_DB_PATH:
+        MANIFEST_DB_PATH = download_manifest(get_manifest_location(additional_headers_val))
+
     # Gets an authenticated session using perform_oauth_flow(); Exits if it fails.
     authenticated_session = perform_oauth_flow(client_id_val, client_secret_val)
     if not authenticated_session:
@@ -195,13 +281,12 @@ def main():
         return
 
     # Fetches the current Bungie.net user details using the authenticated session.
-    print("Fetching account information...")
+    #print("Fetching account information...")
     parsed_user_details_val = get_api_data(authenticated_session, GET_USER_DETAILS_ENDPOINT, additional_headers_val)
     if not parsed_user_details_val: return
     
     bnet_membership_id = parsed_user_details_val.get('Response', {}).get('membershipId')
     bnet_display_name = parsed_user_details_val.get('Response', {}).get('displayName', "Guardian")
-    print(f"   Fetched Bungie.net user: {INFO}{bnet_display_name}")
 
     if not bnet_membership_id:
         print(f"{ERROR}Could not find Bungie.net membershipId. Exiting.")
@@ -215,8 +300,6 @@ def main():
     if not selected_destiny_profile:
         print(ERROR + "Could not determine a Destiny profile to analyze.")
         return
-        
-    print(f"   Selected Destiny account: {INFO} {selected_destiny_profile['display_name']} ({MEMBERSHIP_TYPES.get(selected_destiny_profile['membership_type'])})")
 
     character_data_dict = get_character_info(authenticated_session, additional_headers_val, selected_destiny_profile)
     
@@ -225,19 +308,31 @@ def main():
         return
 
     # Final output
-    print(BORDER)
     print(f"Welcome, {INFO + bnet_display_name}!")
     print(ACTION + "Please select a character below to analyze:")
     print(BORDER)
     
     for char_id, char_info in character_data_dict.items():
-        # You would use the Manifest here to look up class and race names
+
         class_hash = char_info.get('classHash')
         race_hash = char_info.get('raceHash')
         light = char_info.get('light')
-        # Placeholder for class name until Manifest is implemented
-        class_name = f"ClassHash_{class_hash}"
-        print(f"Character: {INFO}{class_name}{RESET} | Light: {ACTION}{light}{RESET} | ID: {char_id}")
+
+        # Querying the manifest for Guardian class.
+        class_dict = query_manifest('DestinyClassDefinition', class_hash)
+        if class_dict:
+            class_str = class_dict['displayProperties']['name']
+        else: 
+            class_str = "Unknown Class"
+
+        # Querying the manifest for Guardian race.
+        race_dict = query_manifest('DestinyRaceDefinition', race_hash)
+        if race_dict:
+            race_str = race_dict['displayProperties']['name']
+        else: 
+            race_str = "Unknown Race"
+
+        print(f"Character: {INFO}{race_str} {class_str}{RESET} | Light: {ACTION}{light}{RESET}")
     
     print(BORDER)
 
