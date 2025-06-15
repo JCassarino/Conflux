@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Profile</title>
+</head>
+<body>
+    <h1>Profile Page</h1>
+
+    <!-- 
+        Here we check if the user_details object and its 'Response' key exist.
+        This is good practice to prevent errors in the template.
+    -->
+    {% if user_details and user_details.Response %}
+        <h2>Welcome, {{ user_details.Response.displayName }}!</h2>
+        <p>Your Bungie.net Membership ID is: {{ user_details.Response.membershipId }}</p>
+
+        <!-- Example of showing more data -->
+        <p>Your primary PSN Display Name is: {{ user_details.Response.psnDisplayName }}</p>
+    {% else %}
+        <p>Could not load user details.</p>
+    {% endif %}
+
+    <hr>
+    <a href="/">Go back home</a>
+
+</body>
+</html>

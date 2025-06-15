@@ -17,7 +17,7 @@ load_dotenv()
 # Initialize colorama to auto-reset colors after each print
 colorama.init(autoreset=True)
 
-# --- Constands & Configuration ---
+# --- Constants & Configuration ---
 
 # Formatting
 HEADER = Fore.MAGENTA + Style.BRIGHT
@@ -54,6 +54,7 @@ def load_credentials():
 
     return api_key, client_id, client_secret
 
+#------------------------------------------------------------------------------- Above has been loaded into web version
 
 def perform_oauth_flow(client_id_val, client_secret_val):
     """

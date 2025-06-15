@@ -16,3 +16,6 @@ __pycache__/
 # Manifest-related
 *.sqlite
 *.content
+
+# Local SSL
+localhost*.pem
