@@ -7,11 +7,25 @@ Destiny 2 Loadout Analyzer is a tool designed to provide in-depth analysis of a 
 The primary goal is to help players better understand their loadouts, optimize their builds for various activities, and discover new synergistic combinations.
 
 ## Current Functionality
-1.  **Data Import:**
-    * Connect to the Bungie.net API to fetch a player's Bungie.net user information.
-    * Utilize this information to pinpoint the user's active Destiny 2 profile to allow for later calls.
+
+This application currently performs the following sequence of operations to successfully retrieve and display basic character information:
+
+1.  **Secure Authentication:**
+    * Initiates a full OAuth 2.0 authorization flow, guiding the user to securely log in and authorize the application via the official Bungie.net website.
+    * Successfully fetches and manages the necessary access tokens for making authenticated API calls.
+
+2.  **Manifest Handling:**
+    * Automatically fetches the location of the latest version of the Destiny 2 Manifest (the game's static database).
+    * Downloads and extracts the Manifest database, making it available for local queries.
+    * Translates raw `hash` IDs from the API into human-readable names (e.g., converting a `classHash` into "Titan", "Hunter", or "Warlock").
+
+3.  **Profile and Character Retrieval:**
+    * Fetches the user's main Bungie.net account details.
+    * Retrieves all linked Destiny 2 game platform accounts (Xbox, PlayStation, Steam, etc.) and intelligently selects the primary profile for analysis (prioritizing the Cross-Save primary).
+    * Fetches a list of all characters on the selected Destiny 2 profile.
+    * Displays a formatted list of the user's characters, showing their correct class, race, and current Light Level.
   
-![Current Output](./Demo/ColorOutput.png)
+![Current Output](./Demo/OutputSS2.png)
 
 
 ## Intended Functionality
