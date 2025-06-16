@@ -52,7 +52,7 @@ This application currently performs the following foundational operations, essen
 
 3.  **In-Depth Build Analysis:**
     * **Component Identification:** Parse equipped abilities (class, subclass, grenade, melee, class ability, Aspects, Fragments), weapons (class, frame, perks), and armor (stats, mods, exotic perks).
-    * **Synergy Evaluation:** Analyze how well all equipped items and abilities work together, including elemental matching, mod interactions (e.g., Charged with Light, Elemental Wells, Strand Tangles), and exotic synergies.
+    * **Synergy Evaluation:** Analyze how well all equipped items and abilities work together, including elemental matching, mod interactions, and exotic synergies.
     * **Strength & Weakness Assessment:** Highlight the strong points of the current build and pinpoint potential shortcomings (e.g., low resilience, unused mod energy, poor stat distribution).
     * **Keyword Detection:** Identify and explain how prevalent keywords (e.g., Scorch, Devour, Volatile, Blind, Suppress) are being generated and leveraged by the build.
 
@@ -60,13 +60,13 @@ This application currently performs the following foundational operations, essen
     * Offer **tailored recommendations** for alternative gear (weapons, armor, exotics) to enhance the current build or address identified weaknesses, potentially suggesting items from your vault.
     * Suggest different **mod configurations** for armor to optimize ability cooldowns, damage output, or survivability.
     * Propose alternative Aspects or Fragments that might better suit the build's focus or improve its overall effectiveness.
-    * Identify "God Rolls" or highly sought-after weapon/armor perks based on community data or your own preferences.
+    * Identify **"God Rolls"** or highly sought-after weapon/armor perks based on community data or your own preferences.
 
 ### Activity & Progress Guidance
 
 5.  **Intelligent Activity Suggestions:**
     * Based on your current **resources, gear level, active quests, uncompleted Triumphs, and seasonal challenges**, Conflux will suggest optimal activities.
-    * Examples: "Farm Crucible for Glimmer," "Complete Nightfall for Enhancement Prisms," "Run a specific lost sector for Exotic Armor," "Progress 'X' quest step."
+    * Examples: "Complete Grandmaster Nightfall for Ascendant Shards," "Run today's Legend lost sector for Exotic Armor," "Complete bountied from Banshee-44 for enhancement prisms."
     * Highlight daily/weekly vendor bounties that align with your current goals.
 
 6.  **Quest & Triumph Progress Tracking:**
@@ -76,7 +76,7 @@ This application currently performs the following foundational operations, essen
 7.  **Recent Activity Summary:**
     * Display a summary of your **most recent in-game activities** (e.g., Crucible matches, Strikes, Raids, Dungeons), including key statistics like K/D, completion time, and major rewards received.
 
-8.  **Collection & Wishlist Integration (Future Idea):**
+8.  **Collection & Wishlist Integration:**
     * Track your progress towards completing in-game collections (weapons, armor, lore).
     * Allow users to build a "wishlist" of desired gear, and Conflux can then suggest activities or vendors that might drop those items.
 
