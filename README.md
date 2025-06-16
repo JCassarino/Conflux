@@ -66,7 +66,7 @@ This application currently performs the following foundational operations, essen
 
 5.  **Intelligent Activity Suggestions:**
     * Based on your current **resources, gear level, active quests, uncompleted Triumphs, and seasonal challenges**, Conflux will suggest optimal activities.
-    * Examples: "Complete Grandmaster Nightfall for Ascendant Shards," "Run today's Legend lost sector for Exotic Armor," "Complete bountied from Banshee-44 for enhancement prisms."
+    * Examples: "Complete Grandmaster Nightfall for Ascendant Shards," "Run today's Legend lost sector for Exotic Armor," "Complete bounties from Banshee-44 for enhancement prisms."
     * Highlight daily/weekly vendor bounties that align with your current goals.
 
 6.  **Quest & Triumph Progress Tracking:**
