@@ -1,5 +1,4 @@
 # Importing necessary libraries
-from sre_parse import State
 from flask import Flask, render_template, request, redirect, session
 from requests_oauthlib import OAuth2Session
 from dotenv import load_dotenv

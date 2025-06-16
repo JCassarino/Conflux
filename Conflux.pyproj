@@ -3,13 +3,14 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>06e4a402-c801-4d38-b2a1-f3a8d6b64715</ProjectGuid>
-    <ProjectHome>.</ProjectHome>
-    <StartupFile>D2LoadoutAnalyzer.py</StartupFile>
+    <ProjectHome>
+    </ProjectHome>
+    <StartupFile>Conflux.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>D2LoadoutAnalyzer</Name>
+    <Name>Conflux</Name>
     <RootNamespace>D2LoadoutAnalyzer</RootNamespace>
     <InterpreterId>MSBuild|venv|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
@@ -22,7 +23,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="D2LoadoutAnalyzer.py" />
+    <Compile Include="Conflux.py" />
+    <Compile Include="ConfluxWeb.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include=".env" />
