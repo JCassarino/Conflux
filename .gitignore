@@ -10,6 +10,7 @@ __pycache__/
 
 # IDE / Editor specific
 .vscode/
+.vs/
 .idea/
 *.DS_Store
 
