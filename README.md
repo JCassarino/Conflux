@@ -29,7 +29,7 @@ This application currently performs the following foundational operations, essen
     * Fetches a list of all characters on the selected Destiny 2 profile.
     * Displays a formatted list of the user's characters, showing their correct **class, race, and current Light Level**.
 
-![Current Output](./Demo/OutputSS2.png)
+![Current Output](./Media/OutputSS2.png)
 
 ---
 
