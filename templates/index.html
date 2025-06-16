@@ -2,19 +2,87 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>D2 Loadout Analyzer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conflux - Your Guardian Hub</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a2e; /* Dark, deep space blue */
+            color: #e0e0e0; /* Light grey text for contrast */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+
+        h1 {
+            color: #00bcd4; /* Cyan glow, reminiscent of Light */
+            font-size: 3em;
+            margin-bottom: 0.5em;
+            text-shadow: 0 0 10px rgba(0, 188, 212, 0.5); /* Subtle glow effect */
+        }
+
+        p {
+            font-size: 1.2em;
+            max-width: 600px; /* Limit line length for readability */
+            line-height: 1.6;
+            margin-bottom: 2em;
+        }
+
+        .login-button {
+            background-color: #e65100; /* Deep orange, similar to Bungie's branding */
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effects */
+            text-decoration: none; /* Ensure no underline if it were an <a> */
+            display: inline-block; /* Allows padding and transitions to apply correctly */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+        }
+
+            .login-button:hover {
+                background-color: #ff6f00; /* Lighter orange on hover */
+                transform: translateY(-2px); /* Slight lift effect */
+            }
+
+            .login-button:active {
+                background-color: #bf360c; /* Darker orange on click */
+                transform: translateY(0); /* Return to original position */
+            }
+        /* Basic responsiveness for smaller screens */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            p {
+                font-size: 1em;
+            }
+
+            .login-button {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+        }
+    </style>
 </head>
 <body>
     <h1>Welcome to Conflux!</h1>
-    <p>Please log in to get started.</p>
+    <p>Your personalized Guardian dashboard for Destiny 2.</p>
+    <p>Analyze your builds, track progress, discover new activities, and master your journey.</p>
 
     <form action="/login">
-        <button type="submit">
+        <button type="submit" class="login-button">
             Login with Bungie
         </button>
-
-
     </form>
-
 </body>
 </html>
