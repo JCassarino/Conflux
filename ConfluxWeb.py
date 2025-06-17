@@ -5,8 +5,6 @@ from dotenv import load_dotenv
 import json
 import webbrowser
 import os
-import colorama
-from colorama import Fore, Style, Back
 import requests # For non-authenticated requests (like the manifest)
 import sqlite3  # For interacting with the SQLite database
 import zipfile  # For handling the .zip file
@@ -14,20 +12,6 @@ import io
 
 # Load environment variables
 load_dotenv()
-
-# Initialize colorama to auto-reset colors after each print
-colorama.init(autoreset=True)
-
-# --- Constants & Configuration ---
-
-# Formatting
-HEADER = Fore.MAGENTA + Style.BRIGHT
-INFO = Fore.GREEN + Style.BRIGHT
-ACTION = Fore.YELLOW
-INPUT = Fore.BLUE
-ERROR = Fore.RED + Style.BRIGHT
-RESET = Style.RESET_ALL
-BORDER = HEADER + "\n-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~\n"
 
 # Membership types for Destiny 2 profiles
 MEMBERSHIP_TYPES = { -1: "All", 254: "BungieNext", 1: "Xbox", 2: "Playstation", 3: "Steam", 6: "Epic Games"}
@@ -58,12 +42,14 @@ def load_credentials():
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv("FLASK_SECRET_KEY")
 
-# Welcome Route
+# ROUTES -- Routes are functions that execute when a specific URL is accessed.
+
+# Welcome Route -- What the user sees when they first open the site.
 @app.route('/')
 def welcome():
-    return render_template('index.html')  # Render the index.html template
+    return render_template('index.html')
 
-# Login Route
+# Login Route -- The user is redirected here to log in with bungie.net
 @app.route('/login')
 def login():
      # Load API credentials using load_credentials(); Exits if any credential is missing.
@@ -96,7 +82,7 @@ def callback():
     state = request.args.get('state')
 
     if state != session.get('oauth_state'):
-        return ERROR + "State mismatch."
+        return "State mismatch."
 
     current_session = OAuth2Session(client_id=client_id_val, redirect_uri=REDIRECT_URL)
     try:
@@ -106,7 +92,7 @@ def callback():
             authorization_response=request.url
         )
     except Exception as e:
-        return ERROR + f"Failed to fetch token: {str(e)}"
+        return f"Failed to fetch token: {str(e)}"
 
     # Store the token in the session for later use
     session['oauth_token'] = token
@@ -115,8 +101,8 @@ def callback():
 
 
 # Profile Route
-@app.route('/profile')
-def profile():
+@app.route('home')
+def home():
     # Load API credentials using load_credentials(); Exits if any credential is missing.
     api_key_val, client_id_val, client_secret_val = load_credentials()
     if not api_key_val:
@@ -126,7 +112,7 @@ def profile():
 
     token = session.get('oauth_token')
     if not token:
-        return ERROR + "You must log in first."
+        return "You must log in first."
 
     authenticated_session = OAuth2Session(client_id=client_id_val, token=token)
 
@@ -135,7 +121,7 @@ def profile():
         user_details_response = authenticated_session.get(GET_USER_DETAILS_ENDPOINT, headers=additional_headers_val)
         user_details = user_details_response.json()
     except Exception as e:
-        return ERROR + f"Failed to fetch user details: {str(e)}"
+        return f"Failed to fetch user details: {str(e)}"
 
     # Render the profile template with user details
     return render_template('profile.html', user_details=user_details)
