@@ -68,7 +68,7 @@
             display: flex;          /* This is the key: makes children (platform-item) align in a row */
             justify-content: center;/* Center the group of items horizontally */
             align-items: center;    /* Align items vertically */
-            gap: 1.5em;             /* Creates space between each platform item */
+            gap: 0.5em;             /* Creates space between each platform item */
             margin-bottom: 2em;     /* Adds space below the platform list */
         }
 
@@ -83,18 +83,10 @@
             width: auto;            /* Maintains aspect ratio */
         }
 
-        .platform-item span {
-            font-size: 1em;        /* Controls the size of the platform display name */
-            color: #c0c0c0;         /* A slightly dimmer white for the name */
-        }
-
-        /* This adds the vertical bar separator between items */
-        .platform-item:not(:last-child)::after {
-            content: '|';           /* The character to use as a separator */
-            margin-left: 0.5em;     /* Space after the item before the bar */
-            color: #444;            /* A dark grey for the separator */
-            font-weight: lighter;
-        }
+            .platform-item span {
+                font-size: 1em; /* Controls the size of the platform display name */
+                color: #c0c0c0; /* A slightly dimmer white for the name */
+            }
 
         @media (max-width: 768px) {
             h1 {
