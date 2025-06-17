@@ -196,9 +196,10 @@ def dashboard():
     bnet_membership_id = user_details.get('Response', {}).get('membershipId')
     linked_profiles_url = f"{BASE_API_URL}/Destiny2/254/Profile/{bnet_membership_id}/LinkedProfiles/" 
     linked_profiles = get_api_data(authenticated_session, linked_profiles_url, additional_headers_val)
+    destiny_profile_list = linked_profiles.get('Response', {}).get('profiles', [])
 
     user_platforms = []
-    for profile in linked_profiles.get('Response', {}).get('profiles'):
+    for profile in destiny_profile_list:
         platform_data = {}
         membership_type = profile.get('membershipType')
         if not membership_type or membership_type not in MEMBERSHIP_TYPES:
