@@ -111,6 +111,7 @@
     {% if user_details and user_details.Response %}
     <h1>Welcome, {{ user_details.Response.displayName }}!</h1>
     <p>{{ user_details.Response.uniqueName }}</p>
+    <p>List: {{platforms}}</p>
     {% else %}
     <h1>Welcome, Guardian!</h1>
     {% endif %}

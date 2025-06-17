@@ -212,7 +212,7 @@ def dashboard():
         platform_data["IconPath"] = platform_icon_path
         user_platforms.append(platform_data)
 
-
+    print(f"User Platforms: {user_platforms}")
     # Render the profile template with user details
     return render_template('dashboard.html', 
                            user_details=user_details, 
