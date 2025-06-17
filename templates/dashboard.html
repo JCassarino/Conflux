@@ -1,130 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">                                    <!--Tells the browser which set of characters to use. UTF-8 is standard.-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">       <!--Scales the page to the user's viewport (screen width)-->
-    <title>Conflux - Your Guardian Hub</title>                                      <!--Title that appears on the browser tab-->
-    <link rel="icon" href="{{ url_for('static', filename='Media/ConfluxLogo.png') }}">  <!--Tells the browser to use the logo as the icon on the browser tab-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conflux - Your Guardian Hub</title>
+    <link rel="icon" href="{{ url_for('static', filename='Media/ConfluxLogo.png') }}">
     <style>
 
         body::before {
-            /* Finding logo */
             content: "";
             background-image: url("{{ url_for('static', filename='Media/ConfluxLogo.png') }}");
-
-            /* Make the logo cover the screen, but don't stretch it */
             background-size: contain;
             background-position: center center;
             background-repeat: no-repeat;
-
-            /* Puts background at the very back (neg z-index) */
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: -1;
-
-            /* --- Adjust logo opacity --- */
             opacity: 0.05;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0e0e1a; /* Background color */
-            color: #e0e0e0; /* Text color */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            background-color: #0e0e1a;
+            color: #e0e0e0;
             margin: 0;
-            text-align: center;
-            padding: 20px;
+            padding: 40px 20px;
             box-sizing: border-box;
+            text-align: center;
+        }
 
-            /* Positions the logo relative to the text */
-            position: relative;
+        .profile-header {
+            margin-bottom: 2em;
         }
 
         h1 {
             color: #adf6ff;
-            font-size: 2em;
-            margin-bottom: 0.25em; /* Reduced margin */
-            text-shadow: 0 0 15px rgba(0, 188, 212, 0.6), 0 0 5px rgba(0, 0, 0, 0.5);
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 0 0 15px rgba(0, 188, 212, 0.6);
         }
-
-        p {
-            font-size: 1.2em;
-            max-width: 600px;
-            line-height: 1.6;
-            margin-bottom: 2em;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
-        }
-
-        /* --- NEW CSS FOR PLATFORM DISPLAY --- */
 
         .platform-container {
-            display: flex;          /* This is the key: makes children (platform-item) align in a row */
-            justify-content: center;/* Center the group of items horizontally */
-            align-items: center;    /* Align items vertically */
-            gap: 0.5em;             /* Creates space between each platform item */
-            margin-bottom: 2em;     /* Adds space below the platform list */
-        }
-
-        .platform-item {
-            display: flex;          /* Aligns the logo and text inside this item in a row */
-            align-items: center;    /* Aligns the logo and text vertically centered */
-            gap: 0.5em;             /* Creates a small space between the logo and the name */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.75em;
+            margin-top: 0.5em;
         }
 
         .platform-item img {
-            height: 20px;           /* Controls the size of the logo */
-            width: auto;            /* Maintains aspect ratio */
+            height: 20px;
+            width: auto;
+        }
+        
+        .bungie-name {
+            font-size: 1.1em;
+            color: #c0c0c0;
+        }
+        
+        /* --- UPDATED CSS FOR CHARACTER CARDS --- */
+
+        .characters-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1400px; /* Increased max-width for more cards */
+            margin-top: 2em;
         }
 
-            .platform-item span {
-                font-size: 1em; /* Controls the size of the platform display name */
-                color: #c0c0c0; /* A slightly dimmer white for the name */
-            }
+        .character-card {
+            width: 426px; /* Set a fixed width */
+            aspect-ratio: 426 / 100; /* Force the div to match the emblem's aspect ratio */
+            border-radius: 5px; /* Slightly less rounded corners */
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            
+            /* The emblem is the background */
+            background-size: cover; /* 'cover' now works perfectly as the aspect ratios match */
+            background-position: center;
 
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5em;
-            }
-            p {
-                font-size: 1em;
-            }
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
+        .character-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 188, 212, 0.4);
+        }
+
+        .character-info {
+            width: 100%;
+            padding: 8px 12px; /* Adjusted padding for the new size */
+            box-sizing: border-box;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0) 100%);
+            text-align: left;
+            /* Added flex to align text elements */
+            display: flex;
+            justify-content: space-between; /* Puts space between the left and right info */
+            align-items: center;
+        }
+
+        /* A new div to group the class/race/title */
+        .character-details {
+            text-align: left;
+        }
+        
+        .character-details h2 {
+            margin: 0;
+            font-size: 1.3em;
+            color: #ffffff;
+            text-shadow: 1px 1px 3px #000;
+            line-height: 1;
+        }
+
+        .character-details p {
+             /* Resetting paragraph styles for this specific context */
+            margin: 2px 0 0;
+            font-size: 0.85em;
+            text-shadow: 1px 1px 2px #000;
+            line-height: 1;
+        }
+
+        .character-title {
+            color: #ffd700 !important; /* Gold color for the title */
+        }
+        
+        /* New div for the light level */
+        .character-light {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #ffd700; /* Yellow for light level */
+            text-shadow: 1px 1px 3px #000;
+            display: flex;
+            align-items: center;
+        }
+        
+        .character-light span {
+             font-size: 0.6em; /* Smaller symbol */
+             margin-right: 4px;
+        }
+
     </style>
 </head>
 <body>
-    <!-- Check if user_details and the nested keys exist before trying to display them -->
-    {% if user_details and user_details.Response %}
-    <h1>Welcome, {{ user_details.Response.displayName }}!</h1>
-
-    <!-- This is the new container for the platform logos and names -->
-    <div class="platform-container">
-        <span>{{ user_details.Response.uniqueName }}</span>
-        {% for platform in platforms %}
-        <div class="platform-item">
-            <img src="{{ platform.IconPath }}" alt="{{ platform.Name }} icon" />
-        </div>
-        {% endfor %}
+    <div class="profile-header">
+        {% if user_details and user_details.Response %}
+            <h1>{{ user_details.Response.displayName }}</h1>
+            <div class="platform-container">
+                <span class="bungie-name">{{ user_details.Response.uniqueName }}</span>
+                {% for platform in platforms %}
+                    <div class="platform-item">
+                        <img src="{{ platform.IconPath }}" alt="{{ platform.Name }} icon" />
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h1>Welcome, Guardian!</h1>
+        {% endif %}
     </div>
 
-    <!-- Container for character info & emblems-->
-    <div class="platform-container">
+    <div class="characters-container">
         {% for character in char_data %}
-        <div class="platform-item">
-            <p>{{ character.Race }} {{ character.Class }} - Light: {{ character.Light }}</p>
-        </div>
+            <div class="character-card" style="background-image: url('{{ character.EmblemBackgroundPath }}');">
+                <div class="character-info">
+                    
+                    <div class="character-details">
+                        <h2>{{ character.Race }} {{ character.Class }}</h2>
+                        {% if character.Title %}
+                            <p class="character-title">{{ character.Title }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="character-light">
+                        <span></span>{{ character.Light }}
+                    </div>
+
+                </div>
+            </div>
         {% endfor %}
     </div>
-    {% else %}
-    <h1>Welcome, Guardian!</h1>
-    {% endif %}
-
-    <p>Please select a character below to get started:</p>
 </body>
 </html>

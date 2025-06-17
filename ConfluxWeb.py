@@ -340,7 +340,10 @@ def dashboard():
         current_char = {}
         class_hash = char_info.get('classHash')
         race_hash = char_info.get('raceHash')
+        title_hash = char_info.get('titleRecordHash')
         light = char_info.get('light')
+        emblem_path = BASE_BUNGIE_URL + char_info.get('emblemPath', '/common/destiny2_content/icons/placeholder.png')  # Default to placeholder if no emblem path
+        emblem_background_path = BASE_BUNGIE_URL + char_info.get('emblemBackgroundPath', '/common/destiny2_content/icons/placeholder.png')  # Default to placeholder if no emblem path
 
         # Querying the manifest for Guardian class.
         class_dict = query_manifest('DestinyClassDefinition', class_hash)
@@ -356,9 +359,19 @@ def dashboard():
         else: 
             race_str = "Unknown Race"
 
+        # Querying the manifest for Guardian title.
+        title_dict = query_manifest('DestinyRecordDefinition', title_hash)
+        if title_dict:
+            title_str = title_dict['displayProperties']['name']
+        else: 
+            title_str = ""
+
         current_char['Race'] = race_str
         current_char['Class'] = class_str
         current_char['Light'] = light
+        current_char['Title'] = title_str
+        current_char['EmblemPath'] = emblem_path
+        current_char['EmblemBackgroundPath'] = emblem_background_path
         simple_char_data.append(current_char)
 
 
@@ -367,7 +380,7 @@ def dashboard():
                            user_details=user_details, 
                            platforms = user_platforms,
                            char_data=simple_char_data,
-                           char_dict = character_data_dict)
+                           )
 
 if __name__ == '__main__':
     # Run the Flask app on port 5000
