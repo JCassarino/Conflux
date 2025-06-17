@@ -10,7 +10,7 @@ By leveraging the Bungie.net API, Conflux will provide a comprehensive overview 
 
 ---
 
-## Current Functionality
+## Current Functionality   --    **[Visit The Site!](https://destiny-2-loadout-analyzer.onrender.com)**
 
 This application currently performs the following foundational operations, essential for future expansion:
 
@@ -29,7 +29,7 @@ This application currently performs the following foundational operations, essen
     * Fetches a list of all characters on the selected Destiny 2 profile.
     * Displays a formatted list of the user's characters, showing their correct **class, race, and current Light Level**.
 
-![Current Output](./Media/OutputSS2.png)
+![Current Output](./static/Media/OutputSS2.png)
 
 ---
 
