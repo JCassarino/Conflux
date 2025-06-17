@@ -26,7 +26,7 @@ GET_USER_DETAILS_ENDPOINT = f"{BASE_API_URL}/User/GetCurrentBungieNetUser/"
 GET_DESTINY_PROFILE_ENDPOINT_TEMPLATE = f"{BASE_API_URL}/Destiny2/{{}}/Profile/{{}}/" # Templated: use .format(membership_type, membership_id)
 GET_MANIFEST_ENDPOINT = f"{BASE_API_URL}/Destiny2/Manifest/"
 
-# Manifest
+# Manifest; 
 MANIFEST_DB_PATH = None  # This will be set after downloading the manifest
 
 def load_credentials():
@@ -38,20 +38,27 @@ def load_credentials():
 
     return api_key, client_id, client_secret
 
+
 # Flask app initialization
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv("FLASK_SECRET_KEY")
 
-# ROUTES -- Routes are functions that execute when a specific URL is accessed.
 
-# Welcome Route -- What the user sees when they first open the site.
 @app.route('/')
 def welcome():
-    return render_template('index.html')
+    """
+    Welcome Route -- What the user sees when they first open the site. Only displays a welcome message and a login button.
+    """
 
-# Login Route -- The user is redirected here to log in with bungie.net
+    return render_template('welcome.html')
+
+
 @app.route('/login')
 def login():
+    """
+    Login Route -- The user is redirected here to log in with bungie.net.
+    """
+
      # Load API credentials using load_credentials(); Exits if any credential is missing.
     api_key_val, client_id_val, client_secret_val = load_credentials()
     if not api_key_val:
@@ -70,9 +77,12 @@ def login():
     return redirect(auth_url)
 
 
-# Callback Route
 @app.route('/callback')
 def callback():
+    """
+    Callback Route -- This is where the user is redirected after logging in with bungie.net -- Sends user to the home page.
+    """
+
     # Load API credentials using load_credentials(); Exits if any credential is missing.
     api_key_val, client_id_val, client_secret_val = load_credentials()
     if not api_key_val:
@@ -97,23 +107,25 @@ def callback():
     # Store the token in the session for later use
     session['oauth_token'] = token
 
-    return redirect('/home')
+    return redirect('/dashboard')
 
 
-# Profile Route
-@app.route('/home')
-def home():
+@app.route('/dashboard')
+def dashboard():
+    """
+    The dashboard will serve as the user's home base within the app. It will display the user's profile information, characters, and other relevant data. All other functionalities will be accessible from this page.
+    """
+
     # Load API credentials using load_credentials(); Exits if any credential is missing.
     api_key_val, client_id_val, client_secret_val = load_credentials()
     if not api_key_val:
         return
 
+    # Check if the user is authenticated; generates an OAuth2 session with the stored token.
     additional_headers_val = {'X-API-KEY': api_key_val}
-
     token = session.get('oauth_token')
     if not token:
         return "You must log in first."
-
     authenticated_session = OAuth2Session(client_id=client_id_val, token=token)
 
     # Fetch user details
@@ -124,7 +136,7 @@ def home():
         return f"Failed to fetch user details: {str(e)}"
 
     # Render the profile template with user details
-    return render_template('profile.html', user_details=user_details)
+    return render_template('dashboard.html', user_details=user_details)
 
 if __name__ == '__main__':
     # Run the Flask app on port 5000
