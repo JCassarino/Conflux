@@ -113,6 +113,14 @@
         {% endfor %}
     </div>
 
+    <!-- Container for character info & emblems-->
+    <div class="platform-container">
+        {% for character in char_data %}
+        <div class="platform-item">
+            <p>{{ character.Race }} {{ character.Class }} - Light: {{ character.Light }}</p>
+        </div>
+        {% endfor %}
+    </div>
     {% else %}
     <h1>Welcome, Guardian!</h1>
     {% endif %}
