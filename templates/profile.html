@@ -1,28 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Your Profile</title>
+    <meta charset="UTF-8">                                                              <!--Tells the browser which set of characters to use. UTF-8 is standard.-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">              <!--Scales the page to the user's viewport (screen width)-->
+    <title>Conflux - Your Guardian Hub</title>                                          <!--Title that appears on the browser tab-->
+    <link rel="icon" href="{{ url_for('static', filename='Media/ConfluxLogo.png') }}">  <!--Tells the browser to use the logo as the icon on the browser tab-->
+    <style>
+
+        body::before {
+            /* Finding logo */
+            content: "";
+            background-image: url("{{ url_for('static', filename='Media/ConfluxLogo.png') }}");
+
+            /* Make the logo cover the screen, but don't stretch it */
+            background-size: contain;
+            background-position: center center;
+            background-repeat: no-repeat;
+
+            /* Puts background at the very back (neg z-index) */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+
+            /* --- Adjust logo opacity --- */
+            opacity: 0.05;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0e0e1a; /* Background color */
+            color: #e0e0e0; /* Text color */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+
+            /* Positions the logo relative to the text */
+            position: relative;
+        }
+
+        h1 {
+            color: #adf6ff;
+            font-size: 2em;
+            margin-bottom: 0.5em;
+            text-shadow: 0 0 15px rgba(0, 188, 212, 0.6), 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        p {
+            font-size: 1.2em;
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 2em;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+            p {
+                font-size: 1em;
+            }
+            .login-button {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Profile Page</h1>
-
-    <!-- 
-        Here we check if the user_details object and its 'Response' key exist.
-        This is good practice to prevent errors in the template.
-    -->
-    {% if user_details and user_details.Response %}
-        <h2>Welcome, {{ user_details.Response.displayName }}!</h2>
-        <p>Your Bungie.net Membership ID is: {{ user_details.Response.membershipId }}</p>
-
-        <!-- Example of showing more data -->
-        <p>Your primary PSN Display Name is: {{ user_details.Response.psnDisplayName }}</p>
-    {% else %}
-        <p>Could not load user details.</p>
-    {% endif %}
-
-    <hr>
-    <a href="/">Go back home</a>
-
+    <h1>Welcome, {{ user_details.Response.displayName }}!</h1>
+    <p>Please select a character below to get started:</p>
 </body>
 </html>

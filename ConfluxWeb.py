@@ -6,8 +6,8 @@ import json
 import webbrowser
 import os
 import requests # For non-authenticated requests (like the manifest)
-import sqlite3  # For interacting with the SQLite database
-import zipfile  # For handling the .zip file
+import sqlite3  # For interacting with the SQLite database (manifest)
+import zipfile  # For handling the .zip file (manifest)
 import io       
 
 # Load environment variables
@@ -97,7 +97,7 @@ def callback():
     # Store the token in the session for later use
     session['oauth_token'] = token
 
-    return redirect('/profile')
+    return redirect('/home')
 
 
 # Profile Route

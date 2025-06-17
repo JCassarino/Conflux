@@ -6,10 +6,9 @@
     <title>Conflux - Your Guardian Hub</title>                                          <!--Title that appears on the browser tab-->
     <link rel="icon" href="{{ url_for('static', filename='Media/ConfluxLogo.png') }}">  <!--Tells the browser to use the logo as the icon on the browser tab-->
     <style>
-        /* --- NEW CSS FOR BACKGROUND --- */
 
         body::before {
-            /* Find your logo using the same url_for method */
+            /* Finding logo */
             content: "";
             background-image: url("{{ url_for('static', filename='Media/ConfluxLogo.png') }}");
 
@@ -18,24 +17,22 @@
             background-position: center center;
             background-repeat: no-repeat;
 
-            /* This is the key part: positions the background behind everything */
+            /* Puts background at the very back (neg z-index) */
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* Puts the background behind the content */
+            z-index: -1;
 
-            /* --- Adjust this value to control the logo's transparency --- */
-            opacity: 0.15; /* Makes the logo faded (0.0 is invisible, 1.0 is fully opaque) */
+            /* --- Adjust logo opacity --- */
+            opacity: 0.15;
         }
-
-        /* --- YOUR EXISTING CSS (with a small change to body) --- */
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0e0e1a; /* Dark, deep space blue */
-            color: #e0e0e0; /* Light grey text for contrast */
+            background-color: #0e0e1a; /* Background color */
+            color: #e0e0e0; /* Text color */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -46,25 +43,15 @@
             padding: 20px;
             box-sizing: border-box;
 
-            /* This ensures our background pseudo-element is positioned relative to the body */
+            /* Positions the logo relative to the text */
             position: relative;
-        }
-
-        /*
-           NOTE: The '.app-logo' class is no longer needed since we removed the <img> tag,
-           but it's fine to leave it here.
-        */
-        .app-logo {
-            max-width: 500px;
-            height: auto;
-            margin-bottom: 2em;
         }
 
         h1 {
             color: #adf6ff;
             font-size: 3em;
             margin-bottom: 0.5em;
-            text-shadow: 0 0 15px rgba(0, 188, 212, 0.6), 0 0 5px rgba(0, 0, 0, 0.5); /* Enhanced shadow for readability */
+            text-shadow: 0 0 15px rgba(0, 188, 212, 0.6), 0 0 5px rgba(0, 0, 0, 0.5);
         }
 
         p {
@@ -72,7 +59,6 @@
             max-width: 600px;
             line-height: 1.6;
             margin-bottom: 2em;
-            /* Added a subtle shadow to all paragraph text to make it stand out */
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
         }
 
