@@ -101,7 +101,7 @@ def callback():
 
 
 # Profile Route
-@app.route('home')
+@app.route('/home')
 def home():
     # Load API credentials using load_credentials(); Exits if any credential is missing.
     api_key_val, client_id_val, client_secret_val = load_credentials()
