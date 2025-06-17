@@ -78,6 +78,10 @@
 </head>
 <body>
     <h1>Welcome, {{ user_details.Response.displayName }}!</h1>
+    <p>{{user_details.uniqueName}}</p>
+    {% for platform in platforms %}
+        <p><img src="{{platform.IconPath}}" alt="{{platform.Name}}_icon"/> {{platform.UserName}}</p>
+    {% endfor %}
     <p>Please select a character below to get started:</p>
 </body>
 </html>

@@ -36,7 +36,7 @@ MEMBERSHIP_TYPES = { -1: "All", 254: "BungieNext", 1: "Xbox", 2: "Playstation", 
 BASE_BUNGIE_URL = "https://www.bungie.net"
 BASE_API_URL = f"{BASE_BUNGIE_URL}/Platform"
 BASE_AUTH_URL = f"{BASE_BUNGIE_URL}/en/oauth/authorize"
-REDIRECT_URL = "https://github.com/JCassarino/Destiny-2-Loadout-Analyzer"
+REDIRECT_URL = "https://github.com/JCassarino/Conflux"
 TOKEN_URL = f"{BASE_API_URL}/app/oauth/token/"
 GET_USER_DETAILS_ENDPOINT = f"{BASE_API_URL}/User/GetCurrentBungieNetUser/"
 GET_DESTINY_PROFILE_ENDPOINT_TEMPLATE = f"{BASE_API_URL}/Destiny2/{{}}/Profile/{{}}/" # Templated: use .format(membership_type, membership_id)
@@ -54,7 +54,6 @@ def load_credentials():
 
     return api_key, client_id, client_secret
 
-#------------------------------------------------------------------------------- Above has been loaded into web version
 
 def perform_oauth_flow(client_id_val, client_secret_val):
     """
