@@ -79,7 +79,7 @@
         }
 
         .platform-item img {
-            height: 24px;           /* Controls the size of the logo */
+            height: 20px;           /* Controls the size of the logo */
             width: auto;            /* Maintains aspect ratio */
         }
 
@@ -91,7 +91,7 @@
         /* This adds the vertical bar separator between items */
         .platform-item:not(:last-child)::after {
             content: '|';           /* The character to use as a separator */
-            margin-left: 1.5em;     /* Space after the item before the bar */
+            margin-left: 0.5em;     /* Space after the item before the bar */
             color: #444;            /* A dark grey for the separator */
             font-weight: lighter;
         }
@@ -121,7 +121,6 @@
         {% endfor %}
     </div>
 
-    <p>List: {{platforms}}</p>
     {% else %}
     <h1>Welcome, Guardian!</h1>
     {% endif %}
