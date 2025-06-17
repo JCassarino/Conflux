@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">                                                              <!--Tells the browser which set of characters to use. UTF-8 is standard.-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">              <!--Scales the page to the user's viewport (screen width)-->
-    <title>Conflux - Your Guardian Hub</title>                                          <!--Title that appears on the browser tab-->
+    <meta charset="UTF-8">                                    <!--Tells the browser which set of characters to use. UTF-8 is standard.-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">       <!--Scales the page to the user's viewport (screen width)-->
+    <title>Conflux - Your Guardian Hub</title>                                      <!--Title that appears on the browser tab-->
     <link rel="icon" href="{{ url_for('static', filename='Media/ConfluxLogo.png') }}">  <!--Tells the browser to use the logo as the icon on the browser tab-->
     <style>
 
@@ -50,7 +50,7 @@
         h1 {
             color: #adf6ff;
             font-size: 2em;
-            margin-bottom: 0.5em;
+            margin-bottom: 0.25em; /* Reduced margin */
             text-shadow: 0 0 15px rgba(0, 188, 212, 0.6), 0 0 5px rgba(0, 0, 0, 0.5);
         }
 
@@ -62,6 +62,40 @@
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
         }
 
+        /* --- NEW CSS FOR PLATFORM DISPLAY --- */
+
+        .platform-container {
+            display: flex;          /* This is the key: makes children (platform-item) align in a row */
+            justify-content: center;/* Center the group of items horizontally */
+            align-items: center;    /* Align items vertically */
+            gap: 1.5em;             /* Creates space between each platform item */
+            margin-bottom: 2em;     /* Adds space below the platform list */
+        }
+
+        .platform-item {
+            display: flex;          /* Aligns the logo and text inside this item in a row */
+            align-items: center;    /* Aligns the logo and text vertically centered */
+            gap: 0.5em;             /* Creates a small space between the logo and the name */
+        }
+
+        .platform-item img {
+            height: 24px;           /* Controls the size of the logo */
+            width: auto;            /* Maintains aspect ratio */
+        }
+
+        .platform-item span {
+            font-size: 1em;        /* Controls the size of the platform display name */
+            color: #c0c0c0;         /* A slightly dimmer white for the name */
+        }
+
+        /* This adds the vertical bar separator between items */
+        .platform-item:not(:last-child)::after {
+            content: '|';           /* The character to use as a separator */
+            margin-left: 1.5em;     /* Space after the item before the bar */
+            color: #444;            /* A dark grey for the separator */
+            font-weight: lighter;
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 2.5em;
@@ -69,19 +103,28 @@
             p {
                 font-size: 1em;
             }
-            .login-button {
-                padding: 12px 25px;
-                font-size: 1em;
-            }
         }
     </style>
 </head>
 <body>
+    <!-- Check if user_details and the nested keys exist before trying to display them -->
+    {% if user_details and user_details.Response %}
     <h1>Welcome, {{ user_details.Response.displayName }}!</h1>
-    <p>{{user_details.uniqueName}}</p>
-    {% for platform in platforms %}
-        <p><img src="{{platform.IconPath}}" alt="{{platform.Name}}_icon"/> {{platform.UserName}}</p>
-    {% endfor %}
+    <p>{{ user_details.Response.uniqueName }}</p>
+    {% else %}
+    <h1>Welcome, Guardian!</h1>
+    {% endif %}
+
+    <!-- This is the new container for the platform logos and names -->
+    <div class="platform-container">
+        {% for platform in platforms %}
+        <div class="platform-item">
+            <img src="{{ platform.IconPath }}" alt="{{ platform.Name }} icon" />
+            <span>{{ platform.UserName }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
     <p>Please select a character below to get started:</p>
 </body>
 </html>
