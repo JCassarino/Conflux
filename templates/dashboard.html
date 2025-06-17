@@ -110,21 +110,21 @@
     <!-- Check if user_details and the nested keys exist before trying to display them -->
     {% if user_details and user_details.Response %}
     <h1>Welcome, {{ user_details.Response.displayName }}!</h1>
-    <p>{{ user_details.Response.uniqueName }}</p>
+
+    <!-- This is the new container for the platform logos and names -->
+    <div class="platform-container">
+        <span>{{ user_details.Response.uniqueName }}</span>
+        {% for platform in platforms %}
+        <div class="platform-item">
+            <img src="{{ platform.IconPath }}" alt="{{ platform.Name }} icon" />
+        </div>
+        {% endfor %}
+    </div>
+
     <p>List: {{platforms}}</p>
     {% else %}
     <h1>Welcome, Guardian!</h1>
     {% endif %}
-
-    <!-- This is the new container for the platform logos and names -->
-    <div class="platform-container">
-        {% for platform in platforms %}
-        <div class="platform-item">
-            <img src="{{ platform.IconPath }}" alt="{{ platform.Name }} icon" />
-            <span>{{ platform.UserName }}</span>
-        </div>
-        {% endfor %}
-    </div>
 
     <p>Please select a character below to get started:</p>
 </body>

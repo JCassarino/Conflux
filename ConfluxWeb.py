@@ -89,11 +89,7 @@ def select_destiny_profile(parsed_linked_profiles_val):
     if not selected_profile:
         selected_profile = destiny_profiles[0]
 
-    return {
-        "membership_id": selected_profile.get('membershipId'),
-        "membership_type": selected_profile.get('membershipType'),
-        "display_name": selected_profile.get('displayName')
-    }
+    return selected_profile
 
 
 # Flask app initialization
@@ -196,19 +192,20 @@ def dashboard():
     bnet_membership_id = user_details.get('Response', {}).get('membershipId')
     linked_profiles_url = f"{BASE_API_URL}/Destiny2/254/Profile/{bnet_membership_id}/LinkedProfiles/" 
     linked_profiles = get_api_data(authenticated_session, linked_profiles_url, additional_headers_val)
-    destiny_profile_list = linked_profiles.get('Response', {}).get('profiles', [])
+
+    selected_profile = select_destiny_profile(linked_profiles)
+
+    
 
     user_platforms = []
-    for profile in destiny_profile_list:
+    for membership in selected_profile.get('applicableMembershipTypes'):
+
         platform_data = {}
-        membership_type = profile.get('membershipType')
-        if not membership_type or membership_type not in MEMBERSHIP_TYPES:
+        platform_name = MEMBERSHIP_TYPES[membership]
+        if not platform_name or membership not in MEMBERSHIP_TYPES:
             continue
-        platform_name = MEMBERSHIP_TYPES[profile.get('membershipType')]
-        platform_user_name = profile.get('displayName')
         platform_icon_path = f"/static/Media/{platform_name.lower()}.png"
         platform_data["Name"] = platform_name
-        platform_data["UserName"] = platform_user_name
         platform_data["IconPath"] = platform_icon_path
         user_platforms.append(platform_data)
 
