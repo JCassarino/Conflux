@@ -39,7 +39,7 @@
         }
 
         .profile-header {
-            margin-bottom: 2em;
+            margin-bottom: 0.5em;
         }
 
         h1 {
@@ -178,7 +178,7 @@
 <body>
     <div class="profile-header">
         {% if user_details and user_details.Response %}
-        <h1>{{ user_details.Response.displayName }}</h1>
+        <h1>Welcome to Conflux!</h1>
         <div class="platform-container">
             <span class="bungie-name">{{ user_details.Response.uniqueName }}</span>
             {% for platform in platforms %}
