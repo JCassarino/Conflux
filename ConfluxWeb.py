@@ -362,7 +362,7 @@ def dashboard():
         # Querying the manifest for Guardian title.
         title_dict = query_manifest('DestinyRecordDefinition', title_hash)
         if title_dict:
-            title_str = title_dict['displayProperties']['name']
+            title_str = title_dict['titleInfo']['titlesByGender']['Male']
         else: 
             title_str = ""
 

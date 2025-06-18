@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conflux - Your Guardian Hub</title>
     <link rel="icon" href="{{ url_for('static', filename='Media/ConfluxLogo.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
 
         body::before {
@@ -23,13 +24,18 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
             background-color: #0e0e1a;
             color: #e0e0e0;
             margin: 0;
             padding: 40px 20px;
             box-sizing: border-box;
             text-align: center;
+            /* --- NEW/UPDATED PROPERTIES FOR CENTERING --- */
+            display: flex; /* Activates Flexbox layout */
+            flex-direction: column; /* Stacks children vertically */
+            align-items: center; /* Centers content along the X-axis (horizontal) */
+            min-height: 100vh; /* Ensures the body takes up at least the full screen height */
         }
 
         .profile-header {
@@ -55,97 +61,116 @@
             height: 20px;
             width: auto;
         }
-        
+
         .bungie-name {
             font-size: 1.1em;
             color: #c0c0c0;
         }
-        
+
         /* --- UPDATED CSS FOR CHARACTER CARDS --- */
 
         .characters-container {
             display: flex;
-            justify-content: center;
+            justify-content: center; /* This property already ensures the group of cards is centered */
             gap: 20px;
             flex-wrap: wrap;
             width: 100%;
-            max-width: 1400px; /* Increased max-width for more cards */
+            max-width: 1400px;
             margin-top: 2em;
         }
 
+        .character-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.2) 70%, rgba(0,0,0,0.8) 100%);
+            z-index: 1;
+        }
+
         .character-card {
-            width: 426px; /* Set a fixed width */
-            aspect-ratio: 426 / 100; /* Force the div to match the emblem's aspect ratio */
-            border-radius: 5px; /* Slightly less rounded corners */
+            width: 380px; /* Made slightly smaller than 426px */
+            aspect-ratio: 4.7 / 1; /* Made slightly longer (from 4.26 to 4.5) */
+            border-radius: 5px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            
-            /* The emblem is the background */
-            background-size: cover; /* 'cover' now works perfectly as the aspect ratios match */
-            background-position: center;
+
+            background-size: cover;
+            background-position: left center;
 
             position: relative;
             display: flex;
-            align-items: flex-end;
+            flex-direction: column;
+            justify-content: flex-start;
 
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .character-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 188, 212, 0.4);
+            box-shadow: 0 8px 25px rgba(81, 165, 176, 0.4);
         }
 
         .character-info {
             width: 100%;
-            padding: 8px 12px; /* Adjusted padding for the new size */
+            padding: 6% 12px;
+            padding-left: 20%;
             box-sizing: border-box;
-            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0) 100%);
             text-align: left;
-            /* Added flex to align text elements */
             display: flex;
-            justify-content: space-between; /* Puts space between the left and right info */
+            justify-content: space-between;
             align-items: center;
+            position: relative;
+            z-index: 2;
         }
 
-        /* A new div to group the class/race/title */
         .character-details {
             text-align: left;
         }
-        
+
         .character-details h2 {
             margin: 0;
-            font-size: 1.3em;
+            font-size: 1.365em;
             color: #ffffff;
             text-shadow: 1px 1px 3px #000;
             line-height: 1;
+            font-weight: 400
         }
 
         .character-details p {
-             /* Resetting paragraph styles for this specific context */
-            margin: 2px 0 0;
-            font-size: 0.85em;
+            margin: 0;
+            font-size: 0.7875em;
             text-shadow: 1px 1px 2px #000;
             line-height: 1;
         }
 
         .character-title {
-            color: #ffd700 !important; /* Gold color for the title */
+            color: #b49bbd !important;
         }
-        
-        /* New div for the light level */
+
         .character-light {
-            font-size: 1.8em;
-            font-weight: bold;
+            font-size: 1.5em;
             color: #ffd700; /* Yellow for light level */
             text-shadow: 1px 1px 3px #000;
             display: flex;
             align-items: center;
         }
-        
+
         .character-light span {
              font-size: 0.6em; /* Smaller symbol */
              margin-right: 4px;
+        }
+
+        .title-separator {
+            color: #444;
+            margin: 0 0.25em; /* Adds space around the separator */
+        }
+
+        .secondary_text {
+            color: #afbacc
         }
 
     </style>
@@ -153,38 +178,44 @@
 <body>
     <div class="profile-header">
         {% if user_details and user_details.Response %}
-            <h1>{{ user_details.Response.displayName }}</h1>
-            <div class="platform-container">
-                <span class="bungie-name">{{ user_details.Response.uniqueName }}</span>
-                {% for platform in platforms %}
-                    <div class="platform-item">
-                        <img src="{{ platform.IconPath }}" alt="{{ platform.Name }} icon" />
-                    </div>
-                {% endfor %}
+        <h1>{{ user_details.Response.displayName }}</h1>
+        <div class="platform-container">
+            <span class="bungie-name">{{ user_details.Response.uniqueName }}</span>
+            {% for platform in platforms %}
+            <div class="platform-item">
+                <img src="{{ platform.IconPath }}" alt="{{ platform.Name }} icon" />
             </div>
+            {% endfor %}
+        </div>
         {% else %}
-            <h1>Welcome, Guardian!</h1>
+        <h1>Welcome, Guardian!</h1>
         {% endif %}
     </div>
 
     <div class="characters-container">
         {% for character in char_data %}
-            <div class="character-card" style="background-image: url('{{ character.EmblemBackgroundPath }}');">
-                <div class="character-info">
-                    
-                    <div class="character-details">
-                        <h2>{{ character.Race }} {{ character.Class }}</h2>
-                        {% if character.Title %}
-                            <p class="character-title">{{ character.Title }}</p>
-                        {% endif %}
-                    </div>
+        <div class="character-card" style="background-image: url('{{ character.EmblemBackgroundPath }}');">
+            <div class="character-info">
 
-                    <div class="character-light">
-                        <span></span>{{ character.Light }}
-                    </div>
+                <div class="character-details">
+                    <h2>{{ character.Class }}</h2>
+
+                    <p>
+                        <span class="secondary_text">{{ character.Race }}</span>               
+                        {% if character.Title %}
+                            <span class="title-separator">|</span>
+
+                        <span class="character-title">{{ character.Title }}</span>
+                        {% endif %}
 
                 </div>
+
+                <div class="character-light">
+                    <span>*</span>{{ character.Light }}
+                </div>
+
             </div>
+        </div>
         {% endfor %}
     </div>
 </body>
