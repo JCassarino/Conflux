@@ -29,7 +29,7 @@ This application currently performs the following foundational operations, essen
     * Fetches a list of all characters on the selected Destiny 2 profile.
     * Displays custom-formatted character cards, displaying each character's **class, race, and current Light Level** on a backdrop of their **currently equipped emblem**.
 
-![Current Output]("/static/Media/ConfluxDashboardHover.png")
+![Current Output](https://raw.githubusercontent.com/JCassarino/Conflux/main/static/Media/ConfluxDashboardHover.png)
 
 ---
 
