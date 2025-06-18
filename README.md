@@ -27,9 +27,9 @@ This application currently performs the following foundational operations, essen
     * Fetches the user's main Bungie.net account details.
     * Retrieves all linked Destiny 2 game platform accounts (Xbox, PlayStation, Steam, etc.) and intelligently selects the **primary profile for analysis** (prioritizing the Cross-Save primary).
     * Fetches a list of all characters on the selected Destiny 2 profile.
-    * Displays a formatted list of the user's characters, showing their correct **class, race, and current Light Level**.
+    * Displays custom-formatted character cards, displaying each character's **class, race, and current Light Level** on a backdrop of their **currently equipped emblem**.
 
-![Current Output](./static/Media/OutputSS2.png)
+![Current Output](./static/Media/Conflux Dashboard Hover.png)
 
 ---
 
