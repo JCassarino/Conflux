@@ -93,19 +93,16 @@
 
         .character-card {
             width: 380px; /* Made slightly smaller than 426px */
-            aspect-ratio: 4.7 / 1; /* Made slightly longer (from 4.26 to 4.5) */
+            aspect-ratio: 5.27083333333 / 1; /* Made slightly longer (from 4.26 to 4.5) */
             border-radius: 5px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-
             background-size: cover;
             background-position: left center;
-
             position: relative;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -133,6 +130,7 @@
 
         .character-details h2 {
             margin: 0;
+            padding-bottom: 0.125em;
             font-size: 1.365em;
             color: #ffffff;
             text-shadow: 1px 1px 3px #000;
@@ -142,6 +140,7 @@
 
         .character-details p {
             margin: 0;
+            padding-top: 0.125em;
             font-size: 0.7875em;
             text-shadow: 1px 1px 2px #000;
             line-height: 1;
@@ -153,10 +152,12 @@
 
         .character-light {
             font-size: 1.5em;
+            padding-top: 0.5em;
             color: #ffd700; /* Yellow for light level */
             text-shadow: 1px 1px 3px #000;
             display: flex;
             align-items: center;
+
         }
 
         .character-light span {
@@ -170,12 +171,25 @@
         }
 
         .secondary_text {
-            color: #afbacc
+            color: #afbacc;
         }
+
+        .icon {
+            width: 0.5em; /* Sizes the icon relative to the text around it */
+            height: 0.5em;
+        }
+
+        .power-icon {
+            fill: #ffd700;
+            padding-bottom: 0.5em;
+        }
+
+
 
     </style>
 </head>
 <body>
+    {{ svg_sprite_content | safe }}
     <div class="profile-header">
         {% if user_details and user_details.Response %}
         <h1>Welcome to Conflux!</h1>
@@ -201,9 +215,9 @@
                     <h2>{{ character.Class }}</h2>
 
                     <p>
-                        <span class="secondary_text">{{ character.Race }}</span>               
+                        <span class="secondary_text">{{ character.Race }}</span>
                         {% if character.Title %}
-                            <span class="title-separator">|</span>
+                        <span class="title-separator">|</span>
 
                         <span class="character-title">{{ character.Title }}</span>
                         {% endif %}
@@ -211,7 +225,10 @@
                 </div>
 
                 <div class="character-light">
-                    <span>*</span>{{ character.Light }}
+                    <svg class="icon power-icon">
+                        <use href="#power"></use>
+                    </svg>
+                    {{ character.Light }}
                 </div>
 
             </div>
