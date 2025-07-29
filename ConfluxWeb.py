@@ -54,15 +54,15 @@ def select_destiny_profile(parsed_linked_profiles_val):
     selected_profile = next((p for p in destiny_profiles if p.get('isCrossSavePrimary')), destiny_profiles[0])
     return selected_profile
 
-def get_character_info(session, headers, destiny_profile):
+def get_character_info(session, headers, destiny_profile, components):
     membership_type =  destiny_profile.get('membershipType')
     membership_id = destiny_profile.get('membershipId')
     if not all([membership_type, membership_id]): return None
     destiny_profile_url = GET_DESTINY_PROFILE_ENDPOINT_TEMPLATE.format(membership_type, membership_id)
-    profile_components = {'components': '200'}
+    profile_components = {'components': components}
     profile_data = get_api_data(session, destiny_profile_url, headers, params=profile_components)
-    if not profile_data or "Response" not in profile_data or "characters" not in profile_data["Response"]: return None
-    return profile_data.get("Response", {}).get("characters", {}).get("data")
+    if not profile_data or "Response" not in profile_data: return None
+    return profile_data.get("Response")
 
 def get_manifest_location(headers):
     try:
@@ -110,7 +110,7 @@ def update_manifest_if_needed():
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv("FLASK_SECRET_KEY")
 
-# --- Flask Routes ---
+# --- Web Routes ---
 @app.route('/')
 def welcome():
     return render_template('welcome.html')
@@ -179,30 +179,82 @@ def dashboard():
                 "IconPath": f"/static/Media/{platform_name.lower()}.png"
             })
             
-    character_data_dict = get_character_info(authenticated_session, additional_headers_val, selected_profile)
+    raw_character_data_full = get_character_info(authenticated_session, additional_headers_val, selected_profile, "200,205")
+    raw_character_info = raw_character_data_full.get("characters", {}).get("data")
+    raw_character_equipment = raw_character_data_full.get("characterEquipment", {}).get("data")
     
-    simple_char_data = []
-    if character_data_dict:
-        for char_id, char_info in character_data_dict.items():
+    processed_char_info = []
+    if raw_character_data_full:
+        for char_id, char_info in raw_character_info.items():
+            current_character = {}
             class_def = query_manifest('DestinyClassDefinition', char_info.get('classHash'))
             race_def = query_manifest('DestinyRaceDefinition', char_info.get('raceHash'))
             title_def = query_manifest('DestinyRecordDefinition', char_info.get('titleRecordHash'))
             
-            simple_char_data.append({
-                'id': char_id,
-                'Race': race_def['displayProperties']['name'] if race_def else "Unknown Race",
-                'Class': class_def['displayProperties']['name'] if class_def else "Unknown Class",
-                'Light': char_info.get('light'),
-                'Title': title_def['titleInfo']['titlesByGender']['Male'] if title_def and 'titleInfo' in title_def else "",
-                'EmblemPath': BASE_BUNGIE_URL + char_info.get('emblemPath', ''),
-                'EmblemBackgroundPath': BASE_BUNGIE_URL + char_info.get('emblemBackgroundPath', '')
-            })
+            current_character['id'] = char_id
+            current_character['Race'] = race_def['displayProperties']['name'] if race_def else "Unknown Race"
+            current_character['Class'] = class_def['displayProperties']['name'] if class_def else "Unknown Class"
+            current_character['Light'] = char_info.get('light')
+            current_character['Title'] = title_def['titleInfo']['titlesByGender']['Male'] if title_def and 'titleInfo' in title_def else ""
+            current_character['EmblemPath'] = BASE_BUNGIE_URL + char_info.get('emblemPath', '')
+            current_character['EmblemBackgroundPath'] = BASE_BUNGIE_URL + char_info.get('emblemBackgroundPath', '')
+
+            for item in raw_character_equipment.get(char_id, {}).get('items', []):
+                item_hash = item.get('itemHash')
+                if not item_hash:
+                    continue
+
+                item_def = query_manifest('DestinyInventoryItemDefinition', item_hash)
+                item_name = item_def['displayProperties']['name'] if item_def else "Unknown Item"
+
+                bucket_hash = item.get('bucketHash')
+                if bucket_hash == 1498876634:
+                    current_character['Kinetic Slot'] = item_name
+                elif bucket_hash == 2465295065:
+                    current_character['Energy Slot'] = item_name
+                elif bucket_hash == 953998645:
+                    current_character['Power Slot'] = item_name
+                elif bucket_hash == 3448274439:
+                    current_character['Helmet'] = item_name
+                elif bucket_hash == 3551918588:
+                    current_character['Gauntlets'] = item_name
+                elif bucket_hash == 14239492:
+                    current_character['Chest Armor'] = item_name
+                elif bucket_hash == 20886954:
+                    current_character['Leg Armor'] = item_name
+                elif bucket_hash == 1585787867:
+                    current_character['Class Item'] = item_name
+                elif bucket_hash == 4023194814:
+                    current_character['Ghost'] = item_name
+                elif bucket_hash == 2025709351:
+                    current_character['Vehicle'] = item_name
+                elif bucket_hash == 284967655:
+                    current_character['Ship'] = item_name
+                elif bucket_hash == 3284755031:
+                    current_character['Subclass'] = item_name
+            
+            processed_char_info.append(current_character)
+
+
+    # TEST: Seeing if i can display the currently equipped weapons
+    character_equipment_dict = get_character_info(authenticated_session, additional_headers_val, selected_profile, 205)
+
+    simple_char_equip = []
+    if character_equipment_dict:
+        for character in character_equipment_dict.get('characterEquipment', {}).get('data', {}).values():
+            for item in character.get('items', {}):
+                item_def = query_manifest('DestinyInventoryItemDefinition', item.get('itemHash'))
+                simple_char_equip.append({
+                    'itemname': item_def['displayProperties']['name'] if item_def else "Unkown Item"
+                    })
+        print(f"RAW Character Equipment Data: {json.dumps(character_equipment_dict, indent=4)}")
+        print(f"CLEANED Character Data:{simple_char_equip}")
 
     # Pass the SVG sprite content to the template
     return render_template('dashboard.html', 
                            user_details=user_details, 
                            platforms=user_platforms,
-                           char_data=simple_char_data,
+                           char_data=processed_char_info,
                            svg_sprite_content=svg_sprite_content)
 
 if __name__ == '__main__':
