@@ -31,11 +31,10 @@
             padding: 40px 20px;
             box-sizing: border-box;
             text-align: center;
-            /* --- NEW/UPDATED PROPERTIES FOR CENTERING --- */
-            display: flex; /* Activates Flexbox layout */
-            flex-direction: column; /* Stacks children vertically */
-            align-items: center; /* Centers content along the X-axis (horizontal) */
-            min-height: 100vh; /* Ensures the body takes up at least the full screen height */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
 
         .profile-header {
@@ -67,16 +66,21 @@
             color: #c0c0c0;
         }
 
-        /* --- UPDATED CSS FOR CHARACTER CARDS --- */
-
         .characters-container {
             display: flex;
-            justify-content: center; /* This property already ensures the group of cards is centered */
+            justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
             width: 100%;
             max-width: 1400px;
             margin-top: 2em;
+        }
+
+        /* --- ADDITION: Container for a character card AND its dropdown --- */
+        .character-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .character-card::before {
@@ -86,14 +90,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-
             background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.2) 70%, rgba(0,0,0,0.8) 100%);
             z-index: 1;
         }
 
         .character-card {
-            width: 380px; /* Made slightly smaller than 426px */
-            aspect-ratio: 5.27083333333 / 1; /* Made slightly longer (from 4.26 to 4.5) */
+            width: 380px;
+            aspect-ratio: 5.27083333333 / 1;
             border-radius: 5px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
@@ -104,6 +107,7 @@
             flex-direction: column;
             justify-content: flex-start;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer; /* ADDITION: Makes the card feel clickable */
         }
 
         .character-card:hover {
@@ -153,7 +157,7 @@
         .character-light {
             font-size: 1.5em;
             padding-top: 0.5em;
-            color: #ffd700; /* Yellow for light level */
+            color: #ffd700;
             text-shadow: 1px 1px 3px #000;
             display: flex;
             align-items: center;
@@ -161,13 +165,13 @@
         }
 
         .character-light span {
-             font-size: 0.6em; /* Smaller symbol */
+             font-size: 0.6em;
              margin-right: 4px;
         }
 
         .title-separator {
             color: #444;
-            margin: 0 0.25em; /* Adds space around the separator */
+            margin: 0 0.25em;
         }
 
         .secondary_text {
@@ -175,7 +179,7 @@
         }
 
         .icon {
-            width: 0.5em; /* Sizes the icon relative to the text around it */
+            width: 0.5em;
             height: 0.5em;
         }
 
@@ -184,6 +188,45 @@
             padding-bottom: 0.5em;
         }
 
+        /* --- ADDITIONS: CSS for the dropdown panel --- */
+        .dropdown-panel {
+            max-height: 0; /* Hidden by default */
+            overflow: hidden; /* Clips the content when hidden */
+            transition: max-height 0.5s ease-in-out; /* Smooth slide animation */
+            background-color: rgba(30, 32, 41, 0.8);
+            backdrop-filter: blur(5px);
+            border-radius: 0 0 5px 5px;
+            width: 380px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            padding: 0 20px; /* Padding will only appear when open */
+            box-sizing: border-box;
+        }
+
+        .dropdown-panel.active {
+            max-height: 500px; /* A large value to ensure content fits */
+            padding: 20px;
+        }
+
+        .loadout-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 columns for weapons */
+            gap: 15px;
+            text-align: left;
+        }
+
+        .loadout-slot h4 {
+            margin: 0 0 5px 0;
+            font-size: 0.9em;
+            color: #adf6ff;
+            font-weight: 400;
+        }
+
+        .loadout-slot p {
+            margin: 0;
+            font-size: 1em;
+            color: #e0e0e0;
+            text-shadow: none;
+        }
 
 
     </style>
@@ -208,32 +251,83 @@
 
     <div class="characters-container">
         {% for character in char_data %}
-        <div class="character-card" style="background-image: url('{{ character.EmblemBackgroundPath }}');">
-            <div class="character-info">
+        <!-- ADDITION: A new wrapper div for each character block -->
+        <div class="character-wrapper">
 
-                <div class="character-details">
-                    <h2>{{ character.Class }}</h2>
+            <!-- REQUIRED EDIT: The character card is now the button itself.
+                 We add a 'data-target' attribute to link this card
+                 to its specific dropdown panel below.
+            -->
+            <div class="character-card"
+                 style="background-image: url('{{ character.EmblemBackgroundPath }}');"
+                 data-target="dropdown-{{ character.id }}">
 
-                    <p>
-                        <span class="secondary_text">{{ character.Race }}</span>
-                        {% if character.Title %}
-                        <span class="title-separator">|</span>
-
-                        <span class="character-title">{{ character.Title }}</span>
-                        {% endif %}
-
+                <div class="character-info">
+                    <div class="character-details">
+                        <h2>{{ character.Class }}</h2>
+                        <p>
+                            <span class="secondary_text">{{ character.Race }}</span>
+                            {% if character.Title %}
+                            <span class="title-separator">|</span>
+                            <span class="character-title">{{ character.Title }}</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="character-light">
+                        <svg class="icon power-icon">
+                            <use href="#power"></use>
+                        </svg>
+                        {{ character.Light }}
+                    </div>
                 </div>
-
-                <div class="character-light">
-                    <svg class="icon power-icon">
-                        <use href="#power"></use>
-                    </svg>
-                    {{ character.Light }}
-                </div>
-
             </div>
+
+            <!-- ADDITION: The hidden dropdown panel for this character.
+                 The ID here must match the 'data-target' from the card above.
+            -->
+            <div class="dropdown-panel" id="dropdown-{{ character.id }}">
+                <div class="loadout-grid">
+                    <div class="loadout-slot">
+                        <h4>Kinetic</h4>
+                        <p>{{ character['Kinetic Slot'] | default('None', true) }}</p>
+                    </div>
+                    <div class="loadout-slot">
+                        <h4>Energy</h4>
+                        <p>{{ character['Energy Slot'] | default('None', true) }}</p>
+                    </div>
+                    <div class="loadout-slot">
+                        <h4>Power</h4>
+                        <p>{{ character['Power Slot'] | default('None', true) }}</p>
+                    </div>
+                </div>
+                <!-- You can add more grids for armor, etc. here -->
+            </div>
+
         </div>
         {% endfor %}
     </div>
+
+    <!-- ADDITION: The JavaScript that powers the dropdown functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Find all the character cards that are meant to be buttons
+            const characterCards = document.querySelectorAll('.character-card');
+
+            characterCards.forEach(card => {
+                // Attach a click event listener to each card
+                card.addEventListener('click', () => {
+                    // Get the ID of the target dropdown panel from the card's 'data-target' attribute
+                    const targetId = card.getAttribute('data-target');
+                    const targetPanel = document.getElementById(targetId);
+
+                    if (targetPanel) {
+                        // Toggle the 'active' class on the target panel.
+                        // This is what our CSS uses to trigger the slide animation.
+                        targetPanel.classList.toggle('active');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
