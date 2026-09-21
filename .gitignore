@@ -1,22 +1,2 @@
-# Python
-venv/
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Environment variables
 .env
-
-# IDE / Editor specific
-.vscode/
-.vs/
-.idea/
-*.DS_Store
-
-# Manifest-related
-*.sqlite
-*.content
-
-# Local SSL
-localhost*.pem
+node_modules/
