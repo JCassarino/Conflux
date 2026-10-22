@@ -7,16 +7,14 @@
     <!--Scales the page to the user's viewport (screen width)-->
     <title>Conflux - Your Guardian Hub</title>
     <!--Title that appears on the browser tab-->
-    <link
-      rel="icon"
-      href="{{ url_for('static', filename='Media/ConfluxLogo.png') }}"
-    />
+    <link rel="icon" href="static\Media\ConfluxLogo.png" />
     <!--Tells the browser to use the logo as the icon on the browser tab-->
     <style>
       body::before {
         /* Finding logo */
         content: "";
-        background-image: url("{{ url_for('static', filename='Media/ConfluxLogo.png') }}");
+        /* background-image: url("{{ url_for('static', filename='Media/ConfluxLogo.png') }}"); */
+        background-image: url("static/Media/ConfluxLogo.png");
 
         /* Make the logo cover the screen, but don't stretch it */
         background-size: contain;
